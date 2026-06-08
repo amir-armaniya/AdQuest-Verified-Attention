@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AdQuest Demo | Red Car Protocol</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* SCROLL FIX: Changed overflow to auto to allow scrolling on small screens */
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: #000; 
+            color: white; 
+            overflow-x: hidden; 
+            overflow-y: auto; /* Movement Bar Enabled */
+            min-height: 100vh; 
+            width: 100vw; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            background: radial-gradient(circle at center, #0f172a 0%, #000000 90%); 
+            user-select: none; 
+            touch-action: pan-y; /* Allow vertical scroll */
+            padding: 20px 0; /* Add breathing room */
+        }
+        
+        #scaler-container { 
+            position: relative; 
+            transform-origin: center center; 
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 
+            box-shadow: 0 0 100px rgba(0,0,0,0.9); 
+            margin: auto; /* Center in scroll view */
+        }
+        
+        .titanium-frame { width: 100%; height: 100%; background: #000; border-radius: 1.5rem; position: relative; overflow: hidden; box-shadow: 0 0 0 1px #333, 0 0 0 4px #0a0a0a; }
+
+        .glass-panel { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); }
+        .glass-card { background: linear-gradient(180deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.2s ease-out; position: relative; overflow: hidden; }
+
+        .fill-overlay { position: absolute; bottom: 0; left: 0; width: 100%; height: 0%; background: linear-gradient(to top, rgba(59, 130, 246, 0.6), rgba(59, 130, 246, 0.2)); z-index: 0; transition: height 0.05s linear; }
+        .border-glow { position: absolute; inset: 0; border: 2px solid transparent; border-radius: 0.75rem; z-index: 5; pointer-events: none; transition: border-color 0.2s; }
+        .option-card.active-input .border-glow { border-color: #60a5fa; box-shadow: inset 0 0 20px rgba(59, 130, 246, 0.4); }
+        
+        .option-card.dimmed { opacity: 0.2; pointer-events: none; filter: grayscale(1); transition: opacity 0.5s ease; }
+        
+        @keyframes pulseShine {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); border-color: rgba(59, 130, 246, 0.4); transform: scale(1); }
+            50% { box-shadow: 0 0 20px 0px rgba(59, 130, 246, 0.7); border-color: rgba(59, 130, 246, 1); transform: scale(1.02); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); border-color: rgba(59, 130, 246, 0.4); transform: scale(1); }
+        }
+        .pulse-shine { animation: pulseShine 1.5s infinite; z-index: 20; }
+
+        .ghost-btn { transition: all 0.5s ease; transform: translateY(0); }
+        .ghost-btn.disabled { opacity: 0; pointer-events: none; transform: translateY(10px); }
+        .ghost-btn.active { opacity: 1; pointer-events: auto; }
+
+        .shake-anim { animation: shake 0.4s ease-in-out; border-color: #ef4444 !important; background: rgba(239, 68, 68, 0.15) !important; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+    <div id="scaler-container">
+        <div class="titanium-frame">
+
+            <div class="absolute top-0 left-0 w-full h-8 flex justify-between items-center px-5 z-50 pointer-events-none bg-gradient-to-b from-black/80 to-transparent">
+                <div class="flex items-center gap-2">
+                    <div class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></div>
+                    <span class="text-[9px] font-mono text-blue-200 tracking-widest">PROTOCOL V9.0</span>
+                </div>
+            </div>
+
+            <div id="gameLayer" class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2850&auto=format&fit=crop')] bg-cover bg-center">
+                <div class="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
+                <div class="absolute top-12 left-6">
+                    <div class="glass-panel px-4 py-2 rounded-full flex items-center gap-2 border-l-2 border-yellow-500">
+                        <span class="text-[10px] text-gray-400 uppercase font-bold">Credits</span>
+                        <span class="text-yellow-400 font-mono font-bold text-sm">2,450</span>
+                    </div>
+                </div>
+                <div class="absolute bottom-12 left-0 w-full flex justify-center px-8">
+                    <button onclick="startAdFlow()" class="group relative w-full max-w-xs glass-panel bg-blue-600/20 hover:bg-blue-600/40 border-blue-500/30 py-4 rounded-xl transition-all active:scale-95 shadow-[0_0_30px_rgba(37,99,235,0.2)]">
+                        <div class="flex items-center justify-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition">
+                                <i data-lucide="play" class="w-4 h-4 text-white fill-current ml-0.5"></i>
+                            </div>
+                            <div class="text-left">
+                                <div class="text-[9px] text-blue-200 uppercase tracking-widest font-bold">Free Rewards</div>
+                                <div class="text-xs text-white font-bold">WATCH AD TO CLAIM</div>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <div id="adLayer" class="absolute inset-0 bg-[#050505] z-40 hidden flex-col select-none">
+                
+                <div id="primerState" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center fade-in">
+                    <div class="max-w-md w-full flex flex-col items-center">
+                        <div class="mb-8 opacity-60 animate-bounce">
+                            <i data-lucide="search" class="w-10 h-10 text-blue-400"></i>
+                        </div>
+                        <h1 class="text-3xl font-black text-white tracking-tight mb-2">FIND THE MATCH</h1>
+                        <p class="text-gray-400 text-xs mb-8">Watch carefully to find the correct model.</p>
+                        
+                        <div class="w-32 h-32 bg-white/5 rounded-2xl flex items-center justify-center mb-8 border border-white/10 shadow-[0_0_30px_rgba(59,130,246,0.1)]">
+                            <i data-lucide="smartphone" class="w-16 h-16 text-white/80"></i>
+                        </div>
+
+                        <button onclick="startVideo()" class="glass-panel px-10 py-4 rounded-full text-xs font-bold text-white hover:bg-white/10 transition flex items-center gap-2 group border-white/10">
+                            <span>I'M READY</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="videoState" class="absolute inset-0 hidden bg-black flex items-center justify-center z-50">
+                    <video id="mainVideo" class="w-full h-full object-contain" playsinline>
+                        <source src="assets/demo/s25ultra.mp4" type="video/mp4">
+                    </video>
+                    
+                    <div class="absolute bottom-8 right-6 z-[60]">
+                        <button id="ghostBtn" onclick="window.open('#', '_blank')" class="ghost-btn disabled glass-panel bg-blue-600/20 hover:bg-blue-600/40 px-4 py-2 rounded-lg flex items-center gap-2 border-blue-400/30 backdrop-blur-md">
+                            <span class="text-[10px] font-bold text-blue-100">INSTALL NOW</span>
+                            <i data-lucide="download" class="w-3 h-3 text-blue-100"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="challengeState" class="absolute inset-0 hidden flex flex-col items-center justify-center p-6 bg-gradient-to-b from-gray-900 to-black">
+                    <div class="text-center mb-6 relative z-10">
+                        <h3 class="text-lg font-bold text-white">Which one was it?</h3>
+                        <p class="text-gray-500 text-[10px] mt-1">Tap or Hold to confirm.</p>
+                    </div>
+
+                    <div id="optionsGrid" class="grid gap-3 w-full max-w-2xl relative z-10">
+                        <div id="opt-1" class="option-card glass-card rounded-xl group p-1 cursor-pointer" 
+                             onmousedown="startInput(1, this, event)" ontouchstart="startInput(1, this, event)"
+                             onmouseup="endInput(1, this)" ontouchend="endInput(1, this)"
+                             onmouseleave="endInput(1, this)" ontouchcancel="endInput(1, this)">
+                            <div class="fill-overlay"></div>
+                            <div class="border-glow"></div>
+                            <div class="relative z-10 flex items-center gap-4 p-2 pointer-events-none">
+                                <div class="w-16 h-16 bg-black/40 rounded-lg flex items-center justify-center p-1">
+                                    <img src="assets/demo/a56.jpg" class="w-full h-full object-contain opacity-70">
+                                </div>
+                                <div class="text-left">
+                                    <div class="text-sm font-bold text-white">Galaxy A56</div>
+                                    <div class="text-[9px] text-gray-500 font-mono uppercase">Series A</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="opt-2" class="option-card glass-card rounded-xl group p-1 cursor-pointer"
+                             onmousedown="startInput(2, this, event)" ontouchstart="startInput(2, this, event)"
+                             onmouseup="endInput(2, this)" ontouchend="endInput(2, this)"
+                             onmouseleave="endInput(2, this)" ontouchcancel="endInput(2, this)">
+                            <div class="fill-overlay"></div>
+                            <div class="border-glow"></div>
+                            <div class="relative z-10 flex items-center gap-4 p-2 pointer-events-none">
+                                <div class="w-16 h-16 bg-black/40 rounded-lg flex items-center justify-center p-1 shadow-inner">
+                                    <img src="assets/demo/s25ultra.jpg" class="w-full h-full object-contain">
+                                </div>
+                                <div class="text-left">
+                                    <div class="text-sm font-bold text-white">S25 Ultra</div>
+                                    <div class="text-[9px] text-blue-400 font-mono uppercase">Flagship</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="opt-3" class="option-card glass-card rounded-xl group p-1 cursor-pointer"
+                             onmousedown="startInput(3, this, event)" ontouchstart="startInput(3, this, event)"
+                             onmouseup="endInput(3, this)" ontouchend="endInput(3, this)"
+                             onmouseleave="endInput(3, this)" ontouchcancel="endInput(3, this)">
+                            <div class="fill-overlay"></div>
+                            <div class="border-glow"></div>
+                            <div class="relative z-10 flex items-center gap-4 p-2 pointer-events-none">
+                                <div class="w-16 h-16 bg-black/40 rounded-lg flex items-center justify-center p-1">
+                                    <img src="assets/demo/zfold7.jpg" class="w-full h-full object-contain opacity-70">
+                                </div>
+                                <div class="text-left">
+                                    <div class="text-sm font-bold text-white">Z Fold7</div>
+                                    <div class="text-[9px] text-gray-500 font-mono uppercase">Foldable</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="successState" class="absolute inset-0 hidden flex flex-col items-center justify-between py-12 px-6 bg-[#050505] z-50 fade-in">
+                    
+                    <div class="flex flex-col items-center w-full">
+                        <div class="relative mb-4">
+                            <div class="absolute inset-0 bg-green-500/20 blur-2xl rounded-full"></div>
+                            <div class="relative w-20 h-20 rounded-full border-4 border-white/10 flex items-center justify-center bg-gradient-to-br from-green-500/20 to-black">
+                                <i data-lucide="check" class="w-10 h-10 text-green-400"></i>
+                            </div>
+                        </div>
+
+                        <div id="tierBadge" class="mb-2"></div>
+                        
+                        <h2 class="text-2xl font-black text-white tracking-tight mb-1">REWARD UNLOCKED</h2>
+                        
+                        <div class="flex items-center gap-2 bg-yellow-500/10 px-4 py-1.5 rounded-full border border-yellow-500/20">
+                            <i data-lucide="gem" class="w-4 h-4 text-yellow-400"></i>
+                            <span class="text-yellow-400 font-bold text-lg">+100 Gems</span>
+                        </div>
+                    </div>
+
+                    <div class="w-full max-w-xs flex flex-col gap-3">
+                        <button onclick="window.open('#', '_blank')" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-900/50 transition flex items-center justify-center gap-2">
+                            <span>INSTALL NOW</span>
+                            <i data-lucide="download" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="triggerNativeShare()" class="w-full glass-panel bg-white/5 hover:bg-white/10 text-white py-3 rounded-xl font-semibold text-xs transition flex items-center justify-center gap-2 border-white/10">
+                            <span>SAVE FOR LATER</span>
+                            <i data-lucide="bookmark" class="w-4 h-4 text-gray-400"></i>
+                        </button>
+                    </div>
+
+                    <button onclick="location.reload()" class="text-[10px] text-gray-500 hover:text-white uppercase tracking-widest mt-auto pt-4">
+                        Return to Game
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // LAYOUT
+        function adaptLayout() {
+            const container = document.getElementById('scaler-container');
+            const optionsGrid = document.getElementById('optionsGrid');
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            let isPortrait = windowHeight > windowWidth;
+            let baseWidth = isPortrait ? 360 : 800;
+            let baseHeight = isPortrait ? 640 : 400;
+
+            if (isPortrait) { optionsGrid.className = "grid grid-cols-1 gap-3 w-full relative z-10 px-4"; } 
+            else { optionsGrid.className = "grid grid-cols-3 gap-4 w-full relative z-10 px-8"; }
+
+            // UPDATED SCALING: Reduced multiplier to leave margin for scroll/buttons
+            const scaleX = (windowWidth * 0.9) / baseWidth;
+            const scaleY = (windowHeight * 0.85) / baseHeight;
+            let scale = Math.min(scaleX, scaleY);
+            scale = Math.min(scale, 1.8); 
+            container.style.width = `${baseWidth}px`;
+            container.style.height = `${baseHeight}px`;
+            container.style.transform = `scale(${scale})`;
+        }
+        window.addEventListener('resize', adaptLayout);
+        setTimeout(adaptLayout, 10);
+
+        // AUDIO
+        let audioCtx, oscillator, gainNode;
+        function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+        function playTone(freq) {
+            if (!audioCtx) initAudio();
+            oscillator = audioCtx.createOscillator();
+            gainNode = audioCtx.createGain();
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(freq || 200, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.start();
+        }
+        function stopTone() { if (oscillator) { oscillator.stop(); oscillator.disconnect(); oscillator = null; } }
+
+        // GAME LOGIC
+        const CORRECT_ID = 2;
+        let progress = 0;
+        let inputInterval = null;
+        let decayInterval = null;
+        let isLocked = false;
+        let attempts = 0;
+        let hintTimer = null;
+        let superHintTimer = null;
+        let hintUsed = false;
+        
+        const video = document.getElementById('mainVideo');
+
+        function startAdFlow() {
+            document.getElementById('adLayer').classList.remove('hidden');
+            document.getElementById('adLayer').classList.add('flex');
+            setTimeout(adaptLayout, 50);
+            setTimeout(() => { if(!video.played.length && !document.getElementById('primerState').classList.contains('hidden')) startVideo(); }, 5000);
+        }
+
+        function startVideo() {
+            document.getElementById('primerState').classList.add('hidden');
+            document.getElementById('videoState').classList.remove('hidden');
+            const ghostBtn = document.getElementById('ghostBtn');
+            ghostBtn.classList.remove('active');
+            ghostBtn.classList.add('disabled');
+            initAudio();
+            video.currentTime = 0;
+            video.play().catch(e => console.log("Autoplay blocked", e));
+            video.onended = endVideo;
+            setTimeout(() => { ghostBtn.classList.remove('disabled'); ghostBtn.classList.add('active'); }, 3000);
+            setTimeout(() => { if(!video.paused) endVideo(); }, 16000);
+        }
+
+        function endVideo() {
+            video.pause();
+            document.getElementById('videoState').classList.add('hidden');
+            document.getElementById('challengeState').classList.remove('hidden');
+            setTimeout(adaptLayout, 50);
+
+            hintTimer = setTimeout(() => {
+                document.getElementById('opt-1').classList.add('dimmed');
+                hintUsed = true;
+            }, 5000);
+
+            superHintTimer = setTimeout(() => {
+                document.getElementById('opt-2').classList.add('pulse-shine');
+                hintUsed = true;
+            }, 8000);
+        }
+
+        function startInput(id, el, e) {
+            if (isLocked) return;
+            
+            clearInterval(decayInterval);
+            clearInterval(inputInterval); 
+
+            el.classList.add('active-input');
+            const overlay = el.querySelector('.fill-overlay');
+            
+            progress += 20; 
+            updateVisuals(overlay, progress, id, el);
+            playTone(200 + progress * 2);
+
+            inputInterval = setInterval(() => {
+                progress += 2;
+                updateVisuals(overlay, progress, id, el);
+                if(oscillator) oscillator.frequency.setValueAtTime(200 + progress * 4, audioCtx.currentTime);
+            }, 30);
+        }
+
+        function endInput(id, el) {
+            clearInterval(inputInterval);
+            stopTone();
+            el.classList.remove('active-input');
+
+            decayInterval = setInterval(() => {
+                if (progress <= 0) {
+                    clearInterval(decayInterval);
+                    progress = 0;
+                } else {
+                    progress -= 5;
+                }
+                const overlay = el.querySelector('.fill-overlay');
+                if(overlay) overlay.style.height = `${progress}%`;
+            }, 20);
+        }
+
+        function updateVisuals(overlay, val, id, el) {
+            if (val >= 100) {
+                progress = 100;
+                clearInterval(inputInterval);
+                finishChallenge(id, el);
+            }
+            overlay.style.height = `${val}%`;
+        }
+
+        function finishChallenge(id, el) {
+            stopTone();
+            
+            if (id === CORRECT_ID) {
+                clearTimeout(hintTimer);
+                clearTimeout(superHintTimer);
+                
+                confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 }, colors: ['#4ade80', '#60a5fa'] });
+                document.getElementById('challengeState').classList.add('hidden');
+                document.getElementById('successState').classList.remove('hidden');
+                
+                const tierDiv = document.getElementById('tierBadge');
+                if (attempts === 0 && !hintUsed) {
+                     tierDiv.innerHTML = '<span class="text-xs font-black text-yellow-400 bg-yellow-500/10 px-3 py-1 rounded border border-yellow-500/30">🏅 TIER A: GOLD</span>';
+                } else if (attempts < 2) {
+                     tierDiv.innerHTML = '<span class="text-xs font-bold text-blue-300 bg-blue-500/10 px-3 py-1 rounded border border-blue-500/30">🥈 TIER B: SILVER</span>';
+                } else {
+                     tierDiv.innerHTML = '<span class="text-xs font-bold text-gray-400 bg-white/5 px-3 py-1 rounded border border-white/10">🥉 TIER C: BRONZE</span>';
+                }
+
+            } else {
+                attempts++;
+                progress = 0;
+                el.querySelector('.fill-overlay').style.height = '0%';
+                
+                el.classList.add('shake-anim');
+                if (navigator.vibrate) navigator.vibrate(200);
+                setTimeout(() => el.classList.remove('shake-anim'), 400);
+            }
+        }
+
+        function triggerNativeShare() {
+            alert("Native Share Sheet:\n\nCheck out Galaxy S25 Ultra!");
+        }
+    </script>
+</body>
+</html>
