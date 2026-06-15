@@ -39,6 +39,12 @@ The problem: Banner blindness costs advertisers billions. Users skip, block, or 
 
 The solution: The Red Car Theory. Before showing the ad, we show a category hint (like "Find the Shoe"). This creates a knowledge gap — your brain naturally starts searching. Then after the video, a quick quiz verifies you actually paid attention.
 
+How it works:
+• User sees "Find the phone" → brain activates search mode
+• User watches ad video passively but actively searching
+• Quick 3-card challenge → hold to confirm correct product
+• Verified attention = higher CPM ($4-$7 vs market rate)
+
 Result from our alpha test:
 • 5x-7x more brand attention time
 • 45% verified engagement rate
