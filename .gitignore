@@ -1,4 +1,27 @@
-pitch deck
-PRD
-archive
-notion
+# Environment & Secrets
+.env
+.env.*
+env.js
+
+# Dependencies
+node_modules/
+package-lock.json
+
+# Archive & Docs (private)
+pitch deck/
+PRD/
+archive/
+notion/
+
+# Build artifacts
+.wrangler/
+dist/
+.cloudflare/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

@@ -8,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
@@ -238,6 +239,77 @@
     <script>
         lucide.createIcons();
 
+        // ═══════════════════════════════════════════════════════════
+        // SUPABASE TRACKING - Verified Attention Protocol
+        // ═══════════════════════════════════════════════════════════
+        const SUPABASE_URL = 'https://qpaefxemqkuyycotytak.supabase.co';
+        const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwYWVmeGVtcWt1eXljb3R5dGFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MzQ5OTUsImV4cCI6MjA5NzExMDk5NX0.IGBZr2FEZD2VD1QNp4cgCPf5XSbI1ERkBESKeqsi5aw';
+        const supa = SUPABASE_URL ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null;
+
+        // Persistent user ID (survives page reloads)
+        function getUserId() {
+            let uid = localStorage.getItem('av_user_id');
+            if (!uid) { uid = crypto.randomUUID(); localStorage.setItem('av_user_id', uid); }
+            return uid;
+        }
+
+        // Session state
+        const SID = crypto.randomUUID();
+        const PAGE_LOAD = Date.now();
+        let sessionId = null;
+        let currentPhase = null;
+
+        // Device fingerprint (minimal)
+        function getDevice() {
+            const c = navigator.connection || {};
+            return {
+                screen: { w: screen.width, h: screen.height, dpr: devicePixelRatio },
+                cores: navigator.hardwareConcurrency,
+                memory: navigator.deviceMemory,
+                touch: navigator.maxTouchPoints,
+                connection: c.effectiveType || 'unknown',
+                lang: navigator.language,
+                tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                ua: navigator.userAgent
+            };
+        }
+
+        // Tab visibility tracking
+        let tabVisibleMs = 0;
+        let tabLastVisible = Date.now();
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                tabVisibleMs += Date.now() - tabLastVisible;
+            } else {
+                tabLastVisible = Date.now();
+            }
+        });
+
+        // Create session row
+        async function initSession() {
+            if (!supa) { console.log('Supabase not configured'); return; }
+            const { data, error } = await supa.from('sessions').insert({
+                user_id: getUserId(),
+                device: getDevice(),
+                referrer: document.referrer || null,
+                input_method: 'ontouchstart' in window ? 'touch' : 'mouse'
+            }).select('id').single();
+            sessionId = data?.id;
+        }
+
+        // Log attention event
+        async function logEvent(payload) {
+            if (!supa || !sessionId) return;
+            await supa.from('attention_events').insert({
+                session_id: sessionId,
+                ...payload
+            });
+        }
+
+        // Initialize on load
+        initSession();
+
+        // ═══════════════════════════════════════════════════════════
         // LAYOUT
         function adaptLayout() {
             const container = document.getElementById('scaler-container');
@@ -289,6 +361,14 @@
         let hintTimer = null;
         let superHintTimer = null;
         let hintUsed = false;
+        let hintTriggeredAt = null;
+        let holdStartMs = null;
+        let holdDurations = [];
+        let challengeStartedAt = null;
+        let videoStartedAt = null;
+        let videoEndedAt = null;
+        let challengeEndedAt = null;
+        let totalHoldMs = 0;
         
         const video = document.getElementById('mainVideo');
 
@@ -296,6 +376,8 @@
             document.getElementById('adLayer').classList.remove('hidden');
             document.getElementById('adLayer').classList.add('flex');
             setTimeout(adaptLayout, 50);
+            currentPhase = 'primer';
+            logEvent({ phase: 'primer' });
             setTimeout(() => { if(!video.played.length && !document.getElementById('primerState').classList.contains('hidden')) startVideo(); }, 5000);
         }
 
@@ -309,24 +391,32 @@
             video.currentTime = 0;
             video.play().catch(e => console.log("Autoplay blocked", e));
             video.onended = endVideo;
+            videoStartedAt = Date.now();
+            currentPhase = 'video';
+            logEvent({ phase: 'video', video_started_at: new Date().toISOString() });
             setTimeout(() => { ghostBtn.classList.remove('disabled'); ghostBtn.classList.add('active'); }, 3000);
             setTimeout(() => { if(!video.paused) endVideo(); }, 16000);
         }
 
         function endVideo() {
             video.pause();
+            videoEndedAt = Date.now();
             document.getElementById('videoState').classList.add('hidden');
             document.getElementById('challengeState').classList.remove('hidden');
             setTimeout(adaptLayout, 50);
+            challengeStartedAt = Date.now();
+            currentPhase = 'challenge';
 
             hintTimer = setTimeout(() => {
                 document.getElementById('opt-1').classList.add('dimmed');
                 hintUsed = true;
+                hintTriggeredAt = Date.now();
             }, 5000);
 
             superHintTimer = setTimeout(() => {
                 document.getElementById('opt-2').classList.add('pulse-shine');
                 hintUsed = true;
+                if (!hintTriggeredAt) hintTriggeredAt = Date.now();
             }, 8000);
         }
 
@@ -338,6 +428,7 @@
 
             el.classList.add('active-input');
             const overlay = el.querySelector('.fill-overlay');
+            holdStartMs = Date.now();
             
             progress += 20; 
             updateVisuals(overlay, progress, id, el);
@@ -354,6 +445,13 @@
             clearInterval(inputInterval);
             stopTone();
             el.classList.remove('active-input');
+
+            if (holdStartMs) {
+                const holdMs = Date.now() - holdStartMs;
+                holdDurations.push(holdMs);
+                totalHoldMs += holdMs;
+                holdStartMs = null;
+            }
 
             decayInterval = setInterval(() => {
                 if (progress <= 0) {
@@ -378,7 +476,12 @@
 
         function finishChallenge(id, el) {
             stopTone();
-            
+            challengeEndedAt = Date.now();
+
+            // Capture tab visibility at end
+            if (!document.hidden) tabVisibleMs += Date.now() - tabLastVisible;
+            tabLastVisible = Date.now();
+
             if (id === CORRECT_ID) {
                 clearTimeout(hintTimer);
                 clearTimeout(superHintTimer);
@@ -387,14 +490,44 @@
                 document.getElementById('challengeState').classList.add('hidden');
                 document.getElementById('successState').classList.remove('hidden');
                 
+                // Compute tier
+                let tier = 'bronze';
+                let score = 0;
+                if (attempts === 0 && !hintUsed) { tier = 'gold'; score = 100; }
+                else if (attempts < 2) { tier = 'silver'; score = 60; }
+                else { tier = 'bronze'; score = 30; }
+
                 const tierDiv = document.getElementById('tierBadge');
-                if (attempts === 0 && !hintUsed) {
+                if (tier === 'gold') {
                      tierDiv.innerHTML = '<span class="text-xs font-black text-yellow-400 bg-yellow-500/10 px-3 py-1 rounded border border-yellow-500/30">🏅 TIER A: GOLD</span>';
-                } else if (attempts < 2) {
+                } else if (tier === 'silver') {
                      tierDiv.innerHTML = '<span class="text-xs font-bold text-blue-300 bg-blue-500/10 px-3 py-1 rounded border border-blue-500/30">🥈 TIER B: SILVER</span>';
                 } else {
                      tierDiv.innerHTML = '<span class="text-xs font-bold text-gray-400 bg-white/5 px-3 py-1 rounded border border-white/10">🥉 TIER C: BRONZE</span>';
                 }
+
+                // Log final event
+                logEvent({
+                    phase: 'reward',
+                    video_started_at: videoStartedAt ? new Date(videoStartedAt).toISOString() : null,
+                    video_ended_at: videoEndedAt ? new Date(videoEndedAt).toISOString() : null,
+                    video_watch_duration_ms: videoStartedAt && videoEndedAt ? videoEndedAt - videoStartedAt : null,
+                    video_duration_ms: video.duration ? Math.round(video.duration * 1000) : null,
+                    video_watch_pct: video.duration ? Math.round(((videoEndedAt - videoStartedAt) / (video.duration * 1000)) * 10000) / 100 : null,
+                    challenge_started_at: challengeStartedAt ? new Date(challengeStartedAt).toISOString() : null,
+                    challenge_ended_at: new Date().toISOString(),
+                    challenge_duration_ms: challengeStartedAt ? Date.now() - challengeStartedAt : null,
+                    challenge_attempts: attempts,
+                    hold_durations_ms: holdDurations,
+                    hint_used: hintUsed,
+                    hint_triggered_at: hintTriggeredAt ? new Date(hintTriggeredAt).toISOString() : null,
+                    was_correct: true,
+                    selected_option: id,
+                    correct_option: CORRECT_ID,
+                    tier: tier,
+                    attention_score: score,
+                    tab_visible_time_ms: tabVisibleMs
+                });
 
             } else {
                 attempts++;
@@ -404,6 +537,16 @@
                 el.classList.add('shake-anim');
                 if (navigator.vibrate) navigator.vibrate(200);
                 setTimeout(() => el.classList.remove('shake-anim'), 400);
+
+                // Log failed attempt
+                logEvent({
+                    phase: 'challenge',
+                    was_correct: false,
+                    selected_option: id,
+                    correct_option: CORRECT_ID,
+                    challenge_attempts: attempts,
+                    hold_durations_ms: holdDurations
+                });
             }
         }
 
