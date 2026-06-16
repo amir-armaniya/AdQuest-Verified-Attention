@@ -10,7 +10,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,124 +33,116 @@
 <body>
     <div id="root"></div>
 
-    <script type="text/babel">
+    <script>
         const { useState, useEffect, useRef } = React;
-        const Icon = ({ name, size = 24, className = "" }) => {
+
+        function Icon(props) {
+            const name = props.name;
+            const size = props.size || 24;
+            const className = props.className || "";
             const iconRef = useRef(null);
             useEffect(() => { if (window.lucide) window.lucide.createIcons(); }, [name]);
-            return <i data-lucide={name} className={className} style={{ width: size, height: size }} ref={iconRef}></i>;
-        };
+            return React.createElement('i', {
+                'data-lucide': name,
+                className: className,
+                style: { width: size, height: size },
+                ref: iconRef
+            });
+        }
 
-        const Hero = () => {
-            return (
-                <section className="min-h-screen flex items-center justify-center relative overflow-hidden px-4 py-20">
-                    <div className="absolute inset-0 bg-grid opacity-20"></div>
-                    <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-600/10 rounded-full blur-[100px] pointer-events-none"></div>
-                    <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[100px] pointer-events-none"></div>
-
-                    <div className="relative z-10 max-w-5xl mx-auto text-center">
-                        <div className="mb-8 inline-flex items-center gap-3 glass px-6 py-2 rounded-full border border-white/5">
-                            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                            <span className="text-gray-300 font-mono text-xs tracking-[0.2em] uppercase">Protocol v9.0 Live</span>
-                        </div>
-
-                        <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-8 leading-tight tracking-tight">
-                            From Forced Views<br />
-                            To <span className="gradient-text">Verified Discovery.</span>
-                        </h1>
-
-                        <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-12 leading-relaxed font-light">
-                            We use the <span className="text-white font-medium">Red Car Theory</span> to prime user focus. 
-                            Zero clicks required, just pure visual attention.
-                        </p>
-
-                        <div className="flex flex-col sm:flex-row gap-5 justify-center items-center">
-                            <a href="demo.html" className="btn-primary px-8 py-4 rounded-xl font-bold text-white text-lg flex items-center gap-3 w-full sm:w-auto justify-center min-w-[200px] shadow-lg shadow-purple-500/20 group">
-                                <Icon name="play-circle" size={20} className="fill-current" />
-                                Launch Demo
-                            </a>
-                            <a href="https://drive.google.com/file/d/1NKfFQWqze6dm7AEcDtFYx2HdhDPnYhXI/view?usp=sharing" target="_blank" className="btn-secondary px-8 py-4 rounded-xl font-bold text-lg flex items-center gap-3 w-full sm:w-auto justify-center min-w-[200px]">
-                                <Icon name="file-text" size={20} />
-                                Pitch Deck
-                            </a>
-                        </div>
-                    </div>
-                </section>
+        function Hero() {
+            return React.createElement('section', { className: 'min-h-screen flex items-center justify-center relative overflow-hidden px-4 py-20' },
+                React.createElement('div', { className: 'absolute inset-0 bg-grid opacity-20' }),
+                React.createElement('div', { className: 'absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-600/10 rounded-full blur-[100px] pointer-events-none' }),
+                React.createElement('div', { className: 'absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[100px] pointer-events-none' }),
+                React.createElement('div', { className: 'relative z-10 max-w-5xl mx-auto text-center' },
+                    React.createElement('div', { className: 'mb-8 inline-flex items-center gap-3 glass px-6 py-2 rounded-full border border-white/5' },
+                        React.createElement('div', { className: 'w-2 h-2 bg-green-400 rounded-full animate-pulse' }),
+                        React.createElement('span', { className: 'text-gray-300 font-mono text-xs tracking-[0.2em] uppercase' }, 'Protocol v9.0 Live')
+                    ),
+                    React.createElement('h1', { className: 'text-5xl md:text-7xl lg:text-8xl font-black mb-8 leading-tight tracking-tight' },
+                        'From Forced Views',
+                        React.createElement('br'),
+                        'To ',
+                        React.createElement('span', { className: 'gradient-text' }, 'Verified Discovery.')
+                    ),
+                    React.createElement('p', { className: 'text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-12 leading-relaxed font-light' },
+                        'We use the ',
+                        React.createElement('span', { className: 'text-white font-medium' }, 'Red Car Theory'),
+                        ' to prime user focus. Zero clicks required, just pure visual attention.'
+                    ),
+                    React.createElement('div', { className: 'flex flex-col sm:flex-row gap-5 justify-center items-center' },
+                        React.createElement('a', { href: 'demo.html', className: 'btn-primary px-8 py-4 rounded-xl font-bold text-white text-lg flex items-center gap-3 w-full sm:w-auto justify-center min-w-[200px] shadow-lg shadow-purple-500/20 group' },
+                            React.createElement(Icon, { name: 'play-circle', size: 20, className: 'fill-current' }),
+                            'Launch Demo'
+                        ),
+                        React.createElement('a', { href: 'https://drive.google.com/file/d/1NKfFQWqze6dm7AEcDtFYx2HdhDPnYhXI/view?usp=sharing', target: '_blank', className: 'btn-secondary px-8 py-4 rounded-xl font-bold text-lg flex items-center gap-3 w-full sm:w-auto justify-center min-w-[200px]' },
+                            React.createElement(Icon, { name: 'file-text', size: 20 }),
+                            'Pitch Deck'
+                        )
+                    )
+                )
             );
-        };
+        }
 
-        const Features = () => {
+        function Features() {
             const cards = [
                 { title: "Ghost Button", desc: "Non-intrusive install button appearing in Safe Area.", icon: "ghost" },
                 { title: "Hybrid Input", desc: "Tap or Hold to verify. Designed for accessibility.", icon: "fingerprint" },
                 { title: "Native Share", desc: "Save for later using system share sheet. No permissions.", icon: "share-2" }
             ];
-            return (
-                <section className="py-20 px-4">
-                    <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
-                        {cards.map((c, i) => (
-                            <div key={i} className="glass rounded-2xl p-8 hover:bg-white/5 transition border border-white/5">
-                                <div className="bg-blue-500/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4 text-blue-400">
-                                    <Icon name={c.icon} size={24} />
-                                </div>
-                                <h3 className="text-xl font-bold text-white mb-2">{c.title}</h3>
-                                <p className="text-gray-400 text-sm">{c.desc}</p>
-                            </div>
-                        ))}
-                    </div>
-                </section>
+            return React.createElement('section', { className: 'py-20 px-4' },
+                React.createElement('div', { className: 'max-w-6xl mx-auto grid md:grid-cols-3 gap-8' },
+                    cards.map((c, i) => React.createElement('div', { key: i, className: 'glass rounded-2xl p-8 hover:bg-white/5 transition border border-white/5' },
+                        React.createElement('div', { className: 'bg-blue-500/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4 text-blue-400' },
+                            React.createElement(Icon, { name: c.icon, size: 24 })
+                        ),
+                        React.createElement('h3', { className: 'text-xl font-bold text-white mb-2' }, c.title),
+                        React.createElement('p', { className: 'text-gray-400 text-sm' }, c.desc)
+                    ))
+                )
             );
-        };
+        }
 
-        const Economics = () => {
-            return (
-                <section className="py-24 px-4 bg-black/30">
-                    <div className="max-w-4xl mx-auto text-center">
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-12">Dynamic Revenue Floor</h2>
-                        <div className="grid md:grid-cols-3 gap-4 items-end h-[300px]">
-                            
-                            <div className="flex flex-col items-center justify-end h-full w-full opacity-60">
-                                <div className="text-gray-400 text-xs mb-2">Tier C (Market)</div>
-                                <div className="w-full bg-gray-800 rounded-t-lg h-[30%] border-t border-gray-600 flex items-center justify-center">
-                                    <span className="text-xs font-mono">Safe Share</span>
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col items-center justify-end h-full w-full">
-                                <div className="text-blue-400 text-xs mb-2 font-bold">Tier B (Assisted)</div>
-                                <div className="w-full bg-blue-900/40 rounded-t-lg h-[60%] border-t border-blue-500 flex items-center justify-center shadow-[0_0_20px_rgba(59,130,246,0.2)]">
-                                    <span className="text-xl font-bold text-white">$4.00</span>
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col items-center justify-end h-full w-full">
-                                <div className="text-yellow-400 text-xs mb-2 font-bold">Tier A (Verified)</div>
-                                <div className="w-full bg-gradient-to-t from-yellow-900/40 to-yellow-600/40 rounded-t-lg h-[100%] border-t border-yellow-400 flex items-center justify-center shadow-[0_0_40px_rgba(234,179,8,0.3)]">
-                                    <span className="text-3xl font-black text-white">$7.00</span>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </section>
+        function Economics() {
+            return React.createElement('section', { className: 'py-24 px-4 bg-black/30' },
+                React.createElement('div', { className: 'max-w-4xl mx-auto text-center' },
+                    React.createElement('h2', { className: 'text-3xl md:text-4xl font-bold text-white mb-12' }, 'Dynamic Revenue Floor'),
+                    React.createElement('div', { className: 'grid md:grid-cols-3 gap-4 items-end h-[300px]' },
+                        React.createElement('div', { className: 'flex flex-col items-center justify-end h-full w-full opacity-60' },
+                            React.createElement('div', { className: 'text-gray-400 text-xs mb-2' }, 'Tier C (Market)'),
+                            React.createElement('div', { className: 'w-full bg-gray-800 rounded-t-lg h-[30%] border-t border-gray-600 flex items-center justify-center' },
+                                React.createElement('span', { className: 'text-xs font-mono' }, 'Safe Share')
+                            )
+                        ),
+                        React.createElement('div', { className: 'flex flex-col items-center justify-end h-full w-full' },
+                            React.createElement('div', { className: 'text-blue-400 text-xs mb-2 font-bold' }, 'Tier B (Assisted)'),
+                            React.createElement('div', { className: 'w-full bg-blue-900/40 rounded-t-lg h-[60%] border-t border-blue-500 flex items-center justify-center shadow-[0_0_20px_rgba(59,130,246,0.2)]' },
+                                React.createElement('span', { className: 'text-xl font-bold text-white' }, '$4.00')
+                            )
+                        ),
+                        React.createElement('div', { className: 'flex flex-col items-center justify-end h-full w-full' },
+                            React.createElement('div', { className: 'text-yellow-400 text-xs mb-2 font-bold' }, 'Tier A (Verified)'),
+                            React.createElement('div', { className: 'w-full bg-gradient-to-t from-yellow-900/40 to-yellow-600/40 rounded-t-lg h-[100%] border-t border-yellow-400 flex items-center justify-center shadow-[0_0_40px_rgba(234,179,8,0.3)]' },
+                                React.createElement('span', { className: 'text-3xl font-black text-white' }, '$7.00')
+                            )
+                        )
+                    )
+                )
             );
-        };
+        }
 
-        const App = () => {
-            return (
-                <div className="min-h-screen text-white">
-                    <Hero />
-                    <Features />
-                    <Economics />
-                    <footer className="py-8 text-center text-gray-600 text-xs font-mono border-t border-white/5 mt-12">
-                        © 2026 AdQuest Protocol v9.0
-                    </footer>
-                </div>
+        function App() {
+            return React.createElement('div', { className: 'min-h-screen text-white' },
+                React.createElement(Hero),
+                React.createElement(Features),
+                React.createElement(Economics),
+                React.createElement('footer', { className: 'py-8 text-center text-gray-600 text-xs font-mono border-t border-white/5 mt-12' }, '© 2026 AdQuest Protocol v9.0')
             );
-        };
+        }
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        root.render(React.createElement(App));
     </script>
 </body>
 </html>
