@@ -6,10 +6,21 @@ export default {
       const body = `window.ENV = ${JSON.stringify({
         SUPABASE_URL: env.SUPABASE_URL || '',
         SUPABASE_ANON: env.SUPABASE_ANON || '',
+        CF_RUNTIME: true,
       })};`;
 
       return new Response(body, {
-        headers: { 'content-type': 'application/javascript' },
+        status: 200,
+        headers: {
+          'content-type': 'application/javascript',
+          'cache-control': 'no-store',
+        },
+      });
+    }
+
+    if (url.pathname === '/favicon.ico') {
+      return new Response('', {
+        status: 204,
       });
     }
 

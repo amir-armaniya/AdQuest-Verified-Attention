@@ -261,7 +261,7 @@
         const supa = (SUPABASE_URL && SUPABASE_ANON && typeof supabase !== 'undefined')
             ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON)
             : null;
-        if (!supa) console.log('Supabase: skipped (env.js not loaded)');
+        if (!supa) console.log('Supabase: skipped (env.js not loaded or secrets missing)');
 
         // Persistent user ID (survives page reloads)
         function getUserId() {
@@ -390,38 +390,59 @@
         const video = document.getElementById('mainVideo');
 
         function startAdFlow() {
-            document.getElementById('adLayer').classList.remove('hidden');
-            document.getElementById('adLayer').classList.add('flex');
-            setTimeout(adaptLayout, 50);
-            currentPhase = 'primer';
-            logEvent({ phase: 'primer' });
+            try {
+                const adLayer = document.getElementById('adLayer');
+                if (!adLayer) {
+                    console.error('startAdFlow: adLayer not found');
+                    return;
+                }
+                adLayer.classList.remove('hidden');
+                adLayer.classList.add('flex');
+                setTimeout(adaptLayout, 50);
+                currentPhase = 'primer';
+                logEvent({ phase: 'primer' });
+            } catch (error) {
+                console.error('startAdFlow failed:', error);
+            }
         }
 
         function startVideo() {
-            document.getElementById('primerState').classList.add('hidden');
-            document.getElementById('videoState').classList.remove('hidden');
-            const ghostBtn = document.getElementById('ghostBtn');
-            const videoLoader = document.getElementById('videoLoader');
-            ghostBtn.classList.remove('active');
-            ghostBtn.classList.add('disabled');
-            video.currentTime = 0;
-            
-            video.oncanplay = () => {
-                videoLoader.classList.add('hidden');
-                video.play().catch(e => console.log("Video playback blocked", e));
-            };
-            
-            setTimeout(() => {
-                videoLoader.classList.add('hidden');
-                if (video.paused) video.play().catch(e => console.log("Video playback blocked", e));
-            }, 3000);
-            
-            video.onended = endVideo;
-            videoStartedAt = Date.now();
-            currentPhase = 'video';
-            logEvent({ phase: 'video', video_started_at: new Date().toISOString() });
-            setTimeout(() => { ghostBtn.classList.remove('disabled'); ghostBtn.classList.add('active'); }, 3000);
-            setTimeout(() => { if(!video.paused) endVideo(); }, 16000);
+            try {
+                const primerState = document.getElementById('primerState');
+                const videoState = document.getElementById('videoState');
+                const ghostBtn = document.getElementById('ghostBtn');
+                const videoLoader = document.getElementById('videoLoader');
+
+                if (!primerState || !videoState || !ghostBtn || !videoLoader) {
+                    console.error('startVideo: required elements not found', { primerState, videoState, ghostBtn, videoLoader });
+                    return;
+                }
+
+                primerState.classList.add('hidden');
+                videoState.classList.remove('hidden');
+                ghostBtn.classList.remove('active');
+                ghostBtn.classList.add('disabled');
+                video.currentTime = 0;
+                
+                video.oncanplay = () => {
+                    videoLoader.classList.add('hidden');
+                    video.play().catch(e => console.log("Video playback blocked", e));
+                };
+                
+                setTimeout(() => {
+                    videoLoader.classList.add('hidden');
+                    if (video.paused) video.play().catch(e => console.log("Video playback blocked", e));
+                }, 3000);
+                
+                video.onended = endVideo;
+                videoStartedAt = Date.now();
+                currentPhase = 'video';
+                logEvent({ phase: 'video', video_started_at: new Date().toISOString() });
+                setTimeout(() => { ghostBtn.classList.remove('disabled'); ghostBtn.classList.add('active'); }, 3000);
+                setTimeout(() => { if(!video.paused) endVideo(); }, 16000);
+            } catch (error) {
+                console.error('startVideo failed:', error);
+            }
         }
 
         function endVideo() {
