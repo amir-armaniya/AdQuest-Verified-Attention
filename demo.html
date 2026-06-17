@@ -18,7 +18,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <script src="env.js" onerror="window.ENV={SUPABASE_URL:'',SUPABASE_ANON:''}"></script>
+    <script src="env.js" onerror="window.ENV=null"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
@@ -138,7 +138,7 @@
                         <div class="w-12 h-12 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mb-4"></div>
                         <p class="text-gray-400 text-xs">Loading video...</p>
                     </div>
-                    <video id="mainVideo" class="w-full h-full object-contain" playsinline muted preload="auto">
+                    <video id="mainVideo" class="w-full h-full object-contain" playsinline preload="auto">
                         <source src="assets/demo/s25ultra.mp4" type="video/mp4">
                     </video>
                     
@@ -261,7 +261,7 @@
         const supa = (SUPABASE_URL && SUPABASE_ANON && typeof supabase !== 'undefined')
             ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON)
             : null;
-        if (!supa) console.log('Supabase: skipped (no env.js or library not loaded)');
+        if (!supa) console.log('Supabase: skipped (env.js not loaded)');
 
         // Persistent user ID (survives page reloads)
         function getUserId() {
@@ -395,7 +395,6 @@
             setTimeout(adaptLayout, 50);
             currentPhase = 'primer';
             logEvent({ phase: 'primer' });
-            setTimeout(() => { if(!video.played.length && !document.getElementById('primerState').classList.contains('hidden')) startVideo(); }, 5000);
         }
 
         function startVideo() {
@@ -405,19 +404,16 @@
             const videoLoader = document.getElementById('videoLoader');
             ghostBtn.classList.remove('active');
             ghostBtn.classList.add('disabled');
-            initAudio();
             video.currentTime = 0;
             
-            // Hide loader when video is ready
             video.oncanplay = () => {
                 videoLoader.classList.add('hidden');
-                video.play().catch(e => console.log("Autoplay blocked", e));
+                video.play().catch(e => console.log("Video playback blocked", e));
             };
             
-            // Fallback if oncanplay doesn't fire
             setTimeout(() => {
                 videoLoader.classList.add('hidden');
-                if (video.paused) video.play().catch(e => console.log("Autoplay blocked", e));
+                if (video.paused) video.play().catch(e => console.log("Video playback blocked", e));
             }, 3000);
             
             video.onended = endVideo;
@@ -629,6 +625,8 @@
         function triggerNativeShare() {
             alert("Native Share Sheet:\n\nCheck out Galaxy S25 Ultra!");
         }
+
+        window.startVideo = startVideo;
     </script>
 </body>
 </html>
