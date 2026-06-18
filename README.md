@@ -1,24 +1,29 @@
 # AdQuest Protocol (v9.0)
 
-![Status](https://img.shields.io/badge/Status-Production%20Ready-success)
-![Platform](https://img.shields.io/badge/Platform-Unity%20SDK-blue)
-![License](https://img.shields.io/badge/License-Proprietary-red)
+![Status](https://img.shields.io/badge/Status-Alpha%20Prototype-orange)
+![Platform](https://img.shields.io/badge/Platform-Web%20Prototype-blue)
+![Protocol](https://img.shields.io/badge/Protocol-v9.0-purple)
 
-> **CONFIDENTIAL:** This repository contains the public documentation for the AdQuest Verified Attention Protocol.
+> **Early-stage prototype.** This repository contains the public documentation for the AdQuest Verified Attention Protocol.
 
 ---
 
-## ⚡ Executive Summary
+## ⚡ Value Proposition (Protocol v9.0)
 
 🚀 **Try the live demo:** https://adquest.tech
-**AdQuest solves the "Banner Blindness" crisis in mobile gaming.**
 
-We shift the advertising paradigm from "Forced Views" to **"Verified Visual Engagement"**. By leveraging cognitive psychology (**Red Car Theory**), we verify that a user has physically and mentally processed the brand message.
+**AdQuest is the industry's first "Reward-Sync" protocol.** 
+We don't force views; we align brand objectives with player incentives. By gamifying the experience, we create genuine engagement.
 
-**Core Value Proposition:**
-* **Advertisers:** Pay only for guaranteed, verified human attention (CPVA).
-* **Developers:** "No-Loss" revenue floor + Premium upside (3.5x lift).
-* **Users:** Gamified, friction-free interaction (Hold/Tap).
+**Current Status:**
+* **Working Prototype:** Live demo with real-time data tracking via Supabase
+* **Verified Attention:** Physical hold-to-verify interaction proves real engagement
+* **Variable Rewards:** Users compete for Gold/Silver/Bronze tiers based on attention quality
+
+**Why It Works:**
+* **Variable Reward System:** The more attention a user provides, the higher the dynamic reward. Users *choose* to watch because they are actively invested in the game economy.
+* **Verified Attention:** Physical hold-to-verify interaction proves real engagement, not passive clicks.
+* **Revenue Follows Value:** We don't sell attention; we facilitate *earned* value. Monetization is a byproduct of a better user experience.
 
 ---
 
@@ -53,25 +58,42 @@ A simple 3-card grid. The user must select the product shown in the video.
 
 ---
 
-## 💰 Unit Economics: The "Hybrid Floor"
+## 💰 Unit Economics: Attention-Based Revenue (Planned — Not Yet Implemented)
 
 We eliminate financial risk for publishers via a dynamic tiering engine:
 
 | Tier | User Behavior | Revenue Model |
 | :--- | :--- | :--- |
-| **A (Gold)** | 1st Try Correct + Fast | **$7.00 CPM (Premium)** |
-| **B (Silver)** | Assisted / Hint Used | **$4.00 CPM (Standard)** |
-| **C (Bronze)** | Wrong / Random | **Market Rate (Safe Share)** |
+| **A (Gold)** | 1st Try Correct + Fast | **+100% revenue share** |
+| **B (Silver)** | Assisted / Hint Used | **+50% revenue share** |
+| **C (Bronze)** | Wrong / Random | **Base rate** |
 
-*In Tier C, we passthrough the standard impression revenue, ensuring the developer never loses money compared to standard ads.*
+*Higher verified attention = higher revenue share for publishers.*
 
 ---
 
-## 🛡️ Fraud & Security
+## 🛡️ Fraud & Security (Planned)
 
 * **Zero-Trust Architecture:** Client telemetry is validated server-side.
 * **Forgiving Physics:** We analyze touch pressure and drift to distinguish "lazy humans" from bots.
 * **Clawback Policy:** Detected bot traffic generates $0.00 revenue, deducted from the next payout.
+
+---
+
+## 📊 Current Status
+
+This is an **early-stage web prototype**. The Unity SDK is planned for future development.
+
+**What exists:**
+- Working web demo (HTML/JS)
+- A/B testing framework
+- ~100 real user test sessions
+
+**What's planned:**
+- Unity SDK implementation
+- Real game integration
+- Advertiser partnerships
+- Larger user testing
 
 ---
 

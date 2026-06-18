@@ -3,201 +3,300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AdQuest Alpha Report</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>AdQuest — Performance Report</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0b1120; /* Dark Navy */
-            --card-bg: #1e293b;
-            --text-main: #e2e8f0;
-            --text-muted: #94a3b8;
-            --accent-blue: #38bdf8;
-            --accent-green: #4ade80;
-            --accent-purple: #c084fc;
+            --bg: #050508;
+            --bg-card: #0d1117;
+            --border: #21262d;
+            --text: #e6edf3;
+            --text-muted: #8b949e;
+            --accent-blue: #58a6ff;
+            --accent-green: #3fb950;
+            --accent-yellow: #d29922;
+            --accent-purple: #bc8cff;
         }
-        body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
-        .container {
-            max-width: 900px;
-            width: 100%;
-        }
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-            border-bottom: 2px solid var(--card-bg);
-            padding-bottom: 20px;
-        }
-        h1 { margin: 0; font-size: 2.5rem; letter-spacing: -1px; }
-        .subtitle { color: var(--accent-blue); font-weight: bold; margin-top: 10px; }
-        
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 30px;
-        }
-        @media(min-width: 768px) {
-            .grid { grid-template-columns: 1fr 1fr; }
-            .full-width { grid-column: span 2; }
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            border: 1px solid #334155;
-        }
-        .card h2 { font-size: 1.2rem; color: var(--text-muted); margin-top: 0; }
-        .stat { font-size: 2rem; font-weight: bold; margin: 10px 0; color: white; }
-        .stat span { color: var(--accent-green); font-size: 1rem; }
-        .desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
-
-        /* Timeline Styles */
-        .timeline { position: relative; padding: 20px 0; }
-        .timeline::before {
-            content: ''; position: absolute; left: 20px; top: 0; bottom: 0;
-            width: 2px; background: #334155;
-        }
-        .event { position: relative; margin-bottom: 20px; padding-left: 50px; }
-        .event::before {
-            content: ''; position: absolute; left: 14px; top: 5px;
-            width: 14px; height: 14px; border-radius: 50%;
-            background: var(--accent-blue); border: 2px solid var(--bg-color);
-        }
-        .event.control::before { background: var(--text-muted); }
-        .event.return::before { background: var(--accent-green); }
-        .event-time { font-size: 0.8rem; color: var(--text-muted); }
-        .event-title { font-weight: bold; color: white; }
-
-        footer { margin-top: 50px; text-align: center; color: var(--text-muted); font-size: 0.8rem; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+        .header { text-align: center; margin-bottom: 60px; padding-bottom: 40px; border-bottom: 1px solid var(--border); }
+        .badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(63,185,80,0.1); border: 1px solid rgba(63,185,80,0.3); border-radius: 100px; padding: 6px 16px; font-size: 12px; font-weight: 600; color: var(--accent-green); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 24px; }
+        .badge .dot { width: 6px; height: 6px; background: var(--accent-green); border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+        h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 900; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 16px; }
+        h1 .gradient { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subtitle { font-size: 18px; color: var(--text-muted); max-width: 600px; margin: 0 auto; }
+        .hero-stat { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 60px; }
+        .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 32px 24px; text-align: center; transition: all 0.3s; }
+        .stat-card:hover { border-color: var(--accent-blue); box-shadow: 0 0 40px rgba(88,166,255,0.15); transform: translateY(-2px); }
+        .stat-card.featured { border-color: rgba(63,185,80,0.4); background: linear-gradient(180deg, rgba(63,185,80,0.05) 0%, var(--bg-card) 100%); }
+        .stat-card.featured:hover { border-color: var(--accent-green); box-shadow: 0 0 40px rgba(63,185,80,0.15); }
+        .stat-number { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; letter-spacing: -0.04em; line-height: 1; margin-bottom: 8px; font-family: 'JetBrains Mono', monospace; }
+        .stat-card.featured .stat-number { color: var(--accent-green); }
+        .stat-label { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+        .stat-compare { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; margin-top: 12px; padding: 4px 10px; border-radius: 100px; background: rgba(63,185,80,0.1); color: var(--accent-green); }
+        .section { margin-bottom: 60px; }
+        .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+        .section-header .icon-box { width: 40px; height: 40px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--accent-blue); }
+        .section-title { font-size: 20px; font-weight: 700; }
+        .section-desc { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+        .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .chart-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
+        .chart-card.full { grid-column: 1 / -1; }
+        .chart-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+        .chart-card .desc { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
+        .chart-wrap { position: relative; height: 280px; }
+        .chart-card.tall .chart-wrap { height: 340px; }
+        .insight { background: linear-gradient(135deg, rgba(88,166,255,0.05), rgba(188,140,255,0.05)); border: 1px solid rgba(88,166,255,0.2); border-radius: 12px; padding: 20px 24px; margin-top: 20px; }
+        .insight .label { font-size: 11px; font-weight: 700; color: var(--accent-blue); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+        .insight p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+        .insight strong { color: var(--text); }
+        .live-section { border: 2px solid rgba(63,185,80,0.3); border-radius: 16px; padding: 32px; background: linear-gradient(135deg, rgba(63,185,80,0.03), transparent); margin-bottom: 60px; }
+        .live-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(63,185,80,0.15); border: 1px solid rgba(63,185,80,0.3); border-radius: 100px; padding: 4px 12px; font-size: 11px; font-weight: 700; color: var(--accent-green); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; }
+        .live-badge .dot { width: 6px; height: 6px; background: var(--accent-green); border-radius: 50%; animation: pulse 1.5s infinite; }
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 13px; }
+        .data-table th { text-align: left; padding: 10px 12px; color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); }
+        .data-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+        .data-table tr:last-child td { border-bottom: none; }
+        .footer { text-align: center; padding-top: 40px; border-top: 1px solid var(--border); margin-top: 40px; }
+        .footer p { font-size: 12px; color: var(--text-muted); }
+        .footer a { color: var(--accent-blue); text-decoration: none; }
+        .nav-links { display: flex; gap: 12px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
+        .nav-links a { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border: 1px solid var(--border); border-radius: 10px; color: var(--text-muted); text-decoration: none; font-size: 13px; font-weight: 600; transition: all 0.2s; }
+        .nav-links a:hover { border-color: var(--accent-blue); color: var(--text); }
+        @media (max-width: 768px) { .hero-stat { grid-template-columns: 1fr; } .chart-grid { grid-template-columns: 1fr; } .container { padding: 24px 16px 60px; } }
     </style>
 </head>
 <body>
-
 <div class="container">
-    <header>
-        <h1>AdQuest Alpha</h1>
-        <div class="subtitle">VALIDATION & PERFORMANCE REPORT</div>
+
+    <nav class="nav-links">
+        <a href="index.html">← Landing Page</a>
+        <a href="demo.html">▶ Demo</a>
+        <a href="storyboard.html">🎬 Storyboard</a>
+        <a href="real_data.csv">📊 Raw Data (CSV)</a>
+        <a href="https://drive.google.com/file/d/1NKfFQWqze6dm7AEcDtFYx2HdhDPnYhXI/view?usp=sharing" target="_blank">📑 Pitch Deck</a>
+    </nav>
+
+    <header class="header">
+        <div class="badge">
+            <span class="dot"></span>
+            Verified Test Data
+        </div>
+        <h1>AdQuest <span class="gradient">Performance Report</span></h1>
+        <p class="subtitle">AdQuest transforms passive ad viewing into active, game-like engagement. 93 unique users, 118 sessions. All evidence in <code style="color:var(--accent-blue)">data_evidence.txt</code>.</p>
+        <div style="margin-top: 24px;">
+            <img src="adquest-demo.gif" alt="AdQuest Demo" style="max-width: 360px; border-radius: 12px; border: 1px solid var(--border);">
+        </div>
     </header>
 
-    <div class="grid">
-        <div class="card full-width">
-            <h2>1. Engagement Duration (Brand Exposure)</h2>
-            <div style="height: 300px;"><canvas id="engagementChart"></canvas></div>
-            <div class="stat">32s <span style="color:var(--accent-blue)">Active Engagement</span></div>
-            <p class="desc">
-                While the Control group averaged 6 seconds (passive view), AdQuest users with intent spent over 30 seconds interacting. 
-                <strong>Insight:</strong> We achieved a <span style="color:var(--accent-green)">5x to 7x increase</span> in brand attention time.
-            </p>
-        </div>
-
-        <div class="card">
-            <h2>2. The Quality Funnel</h2>
-            <div style="height: 250px;"><canvas id="funnelChart"></canvas></div>
-            <div class="stat">100% <span>Conversion on Verified</span></div>
-            <p class="desc">
-                We filtered out accidental clicks. 45% of users proved their interest by solving the challenge. 
-                Every single one of them (100%) clicked the CTA.
-            </p>
-        </div>
-
-        <div class="card">
-            <h2>3. Retention Proof (User d28a...)</h2>
-            <div class="timeline">
-                <div class="event">
-                    <div class="event-time">Day 1 - 16:16</div>
-                    <div class="event-title">AdQuest Challenge (40s)</div>
-                    <div class="desc">User solves the puzzle. High engagement.</div>
-                </div>
-                <div class="event control">
-                    <div class="event-time">Day 1 - 16:18</div>
-                    <div class="event-title">Control Group Exposure (1s)</div>
-                    <div class="desc">User sees normal ad, ignores it quickly.</div>
-                </div>
-                <div class="event return">
-                    <div class="event-time">Day 2 - 22:37</div>
-                    <div class="event-title">AdQuest Return (21s)</div>
-                    <div class="desc">User RETURNS voluntarily & completes video.</div>
-                </div>
+    <!-- Hero Stats -->
+    <div class="hero-stat">
+        <div class="stat-card">
+            <div class="stat-number" style="color: var(--accent-blue);">13.7s</div>
+            <div class="stat-label">AdQuest Avg Engagement</div>
+            <div class="stat-compare">
+                <i data-lucide="trending-up" style="width:12px;height:12px"></i>
+                vs 6.9s control
             </div>
-            <p class="desc">
-                <strong>Verdict:</strong> Friction did not kill retention. The user experienced both versions and chose to engage with AdQuest again.
-            </p>
+        </div>
+        <div class="stat-card featured">
+            <div class="stat-number">2.0x</div>
+            <div class="stat-label">Engagement Lift</div>
+            <div class="stat-compare">
+                <i data-lucide="arrow-up" style="width:12px;height:12px"></i>
+                vs forced 10s wait
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" style="color: var(--accent-purple);">93</div>
+            <div class="stat-label">Unique Real Users</div>
+            <div class="stat-compare">
+                <i data-lucide="check-circle" style="width:12px;height:12px"></i>
+                118 sessions total
+            </div>
         </div>
     </div>
 
-    <footer>
-        Generated by Product Architect | Data Source: Alpha Logs (Jan 2026)
+    <!-- VERIFIED DATA SECTION -->
+    <div class="live-section">
+        <div class="live-badge"><span class="dot"></span> Verified Test Data</div>
+        <h2 style="font-size:22px; font-weight:800; margin-bottom:16px;">Real User Performance</h2>
+        <p style="color:var(--text-muted); font-size:14px; margin-bottom:24px;">
+            Metrics from <code style="color:var(--accent-blue)">data_evidence.txt</code> — 93 unique real users from A/B tests. Developer sessions excluded. Control group = users who clicked a button and were forced to wait 10 seconds for a reward. AdQuest group = users who watched a video and solved a challenge to earn the reward.
+        </p>
+        <table class="data-table">
+            <tr><th>Metric</th><th>Control (Forced Wait)</th><th>AdQuest (Gamified)</th><th>Result</th></tr>
+            <tr><td>Sessions</td><td style="font-family:'JetBrains Mono',monospace">36</td><td style="font-family:'JetBrains Mono',monospace">51</td><td>—</td></tr>
+            <tr><td>Avg. Engagement</td><td style="font-family:'JetBrains Mono',monospace">6.9s</td><td style="font-family:'JetBrains Mono',monospace;color:var(--accent-green)">13.7s</td><td style="color:var(--accent-green);font-weight:700">2x longer</td></tr>
+            <tr><td>Challenge Completion</td><td>—</td><td style="font-family:'JetBrains Mono',monospace">27%</td><td>—</td></tr>
+            <tr><td>Total Real Users</td><td colspan="3" style="font-family:'JetBrains Mono',monospace;color:var(--accent-blue);font-weight:700">93 users, 118 sessions</td></tr>
+        </table>
+        <div class="insight" style="margin-top:20px">
+            <div class="label">Methodology</div>
+            <p>Control group clicked a button and were forced to wait 10 seconds before receiving a reward. Average 6.9s means many users abandoned before the wait was over — forced waiting = friction = user drop-off. AdQuest group voluntarily watched a video and solved a challenge. Average 13.7s means users stayed longer despite having more to do. <strong>The key insight: gamified engagement beats forced waiting, even when it requires more effort.</strong></p>
+        </div>
+    </div>
+
+    <!-- Section 1: Engagement Comparison -->
+    <div class="section">
+        <div class="section-header">
+            <div class="icon-box"><i data-lucide="bar-chart-3" style="width:20px;height:20px"></i></div>
+            <div>
+                <div class="section-title">Engagement Comparison</div>
+                <div class="section-desc">Real users: AdQuest vs Control</div>
+            </div>
+        </div>
+        <div class="chart-grid">
+            <div class="chart-card full">
+                <h3>Average Time on Page (Seconds)</h3>
+                <div class="desc">Control = click button + forced 10s wait + reward (passive). AdQuest = watch video + solve challenge + reward (active). Real A/B test data.</div>
+                <div class="chart-wrap"><canvas id="engagementChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2: Funnel -->
+    <div class="section">
+        <div class="section-header">
+            <div class="icon-box"><i data-lucide="target" style="width:20px;height:20px"></i></div>
+            <div>
+                <div class="section-title">AdQuest Funnel</div>
+                <div class="section-desc">From impression to challenge completion</div>
+            </div>
+        </div>
+        <div class="chart-grid">
+            <div class="chart-card full">
+                <h3>Verification Funnel (Real Users)</h3>
+                <div class="desc">18% of real users completed the challenge — these are verified high-intent users.</div>
+                <div class="chart-wrap"><canvas id="funnelChart"></canvas></div>
+                <div class="insight">
+                    <div class="label">Key Insight</div>
+                    <p><strong>27% completion rate</strong> means 1 in 4 users who engaged with the challenge proved their attention. Compared to the control group where users abandoned a 10-second forced wait, AdQuest keeps users engaged through voluntary participation. <strong>The shift from passive waiting to active challenge is the core innovation.</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 3: Retention -->
+    <div class="section">
+        <div class="section-header">
+            <div class="icon-box"><i data-lucide="refresh-cw" style="width:20px;height:20px"></i></div>
+            <div>
+                <div class="section-title">Retention Proof</div>
+                <div class="section-desc">Real user return pattern from A/B test</div>
+            </div>
+        </div>
+        <div class="chart-grid">
+            <div class="chart-card full">
+                <h3>User d28a... Session Timeline</h3>
+                <div class="desc">Same user exposed to both AdQuest and Control. Returned voluntarily to AdQuest.</div>
+                <div style="padding:20px 0;">
+                    <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:20px;">
+                        <div style="min-width:12px;height:12px;border-radius:50%;background:var(--accent-blue);margin-top:4px;"></div>
+                        <div>
+                            <div style="font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace">Day 1 — 16:16</div>
+                            <div style="font-size:14px;font-weight:700">AdQuest Session (40s)</div>
+                            <div style="font-size:12px;color:var(--text-muted)">Video + challenge + reward</div>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:20px;">
+                        <div style="min-width:12px;height:12px;border-radius:50%;background:var(--text-muted);margin-top:4px;"></div>
+                        <div>
+                            <div style="font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace">Day 1 — 16:18</div>
+                            <div style="font-size:14px;font-weight:700">Control Exposure (1s)</div>
+                            <div style="font-size:12px;color:var(--text-muted)">Standard ad, immediate skip</div>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:20px;">
+                        <div style="min-width:12px;height:12px;border-radius:50%;background:var(--accent-green);margin-top:4px;"></div>
+                        <div>
+                            <div style="font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace">Day 2 — 22:37</div>
+                            <div style="font-size:14px;font-weight:700">AdQuest Return (21s)</div>
+                            <div style="font-size:12px;color:var(--text-muted)">Voluntary return — next day</div>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:16px;align-items:flex-start;">
+                        <div style="min-width:12px;height:12px;border-radius:50%;background:var(--accent-purple);margin-top:4px;"></div>
+                        <div>
+                            <div style="font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace">Day 3 — 03:57</div>
+                            <div style="font-size:14px;font-weight:700">Third Session (50s)</div>
+                            <div style="font-size:12px;color:var(--text-muted)">3rd session in 3 days</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="insight">
+                    <div class="label">Note</div>
+                    <p>This is a <strong>single user case study</strong>, not a statistical proof. However, it demonstrates that the reward system can create voluntary return behavior — a key differentiator from standard ads.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>Data Source: real_data.csv · Protocol v9.0 · <a href="https://adquest.tech">adquest.tech</a></p>
     </footer>
+
 </div>
 
 <script>
-    // Global Defaults for Dark Theme
-    Chart.defaults.color = '#94a3b8';
-    Chart.defaults.borderColor = '#334155';
-    Chart.defaults.font.family = "'Segoe UI', sans-serif";
+    Chart.defaults.color = '#8b949e';
+    Chart.defaults.borderColor = '#21262d';
+    Chart.defaults.font.family = "'Inter', sans-serif";
 
-    // 1. Engagement Chart
-    const ctx1 = document.getElementById('engagementChart').getContext('2d');
-    new Chart(ctx1, {
+    // Engagement Chart
+    new Chart(document.getElementById('engagementChart'), {
         type: 'bar',
         data: {
-            labels: ['Control (Passive)', 'AdQuest (Avg)', 'AdQuest (High Intent)'],
+            labels: ['Control Group\n(Direct CTA)', 'AdQuest\n(Real Users)'],
             datasets: [{
-                label: 'Seconds on Page',
-                data: [6.2, 13.6, 32],
-                backgroundColor: ['#475569', '#38bdf8', '#4ade80'],
-                borderRadius: 6,
-                barThickness: 50
+                label: 'Avg. Seconds',
+                data: [6.9, 13.7],
+                backgroundColor: ['rgba(139,148,158,0.5)', 'rgba(88,166,255,0.7)'],
+                borderColor: ['rgb(139,148,158)', 'rgb(88,166,255)'],
+                borderWidth: 2,
+                borderRadius: 8,
+                barThickness: 80,
             }]
         },
         options: {
-            responsive: true,
-            maintainAspectRatio: false,
+            responsive: true, maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: {
-                y: { beginAtZero: true, title: { display: true, text: 'Seconds' } }
+                y: { beginAtZero: true, grid: { color: 'rgba(33,38,45,0.5)' }, title: { display: true, text: 'Seconds' } },
+                x: { grid: { display: false }, ticks: { font: { size: 12, weight: '600' } } }
             }
         }
     });
 
-    // 2. Funnel Chart
-    const ctx2 = document.getElementById('funnelChart').getContext('2d');
-    new Chart(ctx2, {
+    // Funnel Chart
+    new Chart(document.getElementById('funnelChart'), {
         type: 'bar',
-        indexAxis: 'y',
         data: {
-            labels: ['Active Search', 'Verified (Challenge)', 'Conversion (CTA)'],
+            labels: ['AdQuest Sessions', 'Challenge Shown', 'Completed (Verified)'],
             datasets: [{
-                label: 'User %',
-                data: [65, 45, 45],
-                backgroundColor: ['#38bdf8', '#c084fc', '#4ade80'],
+                label: 'Users',
+                data: [51, 38, 7],
+                backgroundColor: ['rgba(88,166,255,0.6)', 'rgba(188,140,255,0.6)', 'rgba(63,185,80,0.7)'],
+                borderColor: ['rgb(88,166,255)', 'rgb(188,140,255)', 'rgb(63,185,80)'],
+                borderWidth: 1,
                 borderRadius: 4,
-                barThickness: 30
             }]
         },
         options: {
-            responsive: true,
-            maintainAspectRatio: false,
+            responsive: true, maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: {
-                x: { max: 80, display: false } // Hiding x axis for cleaner look
-            },
-            animation: {
-                onComplete: function () {
-                    // Logic to draw values could go here, but simple tooltips are enough for this view
-                }
+                y: { beginAtZero: true, grid: { color: 'rgba(33,38,45,0.5)' } },
+                x: { grid: { display: false }, ticks: { font: { size: 11, weight: '600' } } }
             }
         }
     });
-</script>
 
+    if (window.lucide) lucide.createIcons();
+</script>
 </body>
 </html>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdQuest GIF Storyboard — Static Frames</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #0a0a0f; color: white; padding: 40px; }
+        h1 { text-align: center; font-size: 24px; margin-bottom: 8px; }
+        .subtitle { text-align: center; color: #666; font-size: 14px; margin-bottom: 40px; }
+        .frames { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 24px; max-width: 1400px; margin: 0 auto; }
+        .frame {
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+        }
+        .frame-header {
+            padding: 16px 20px;
+            background: #16161d;
+            border-bottom: 1px solid #222;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .frame-num {
+            width: 32px; height: 32px;
+            background: linear-gradient(135deg, #a855f7, #3b82f6);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 14px;
+        }
+        .frame-title { font-weight: 700; font-size: 14px; }
+        .frame-desc { font-size: 11px; color: #888; }
+        .frame-content {
+            height: 260px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .frame-caption {
+            padding: 12px 20px;
+            font-size: 12px;
+            color: #666;
+            border-top: 1px solid #222;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Simulated phone frames */
+        .phone-mock {
+            width: 220px;
+            height: 200px;
+            background: #000;
+            border-radius: 16px;
+            border: 2px solid #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .phone-mock .status-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+            font-size: 8px;
+            color: #58a6ff;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .phone-mock .status-bar .dot {
+            width: 4px; height: 4px;
+            background: #3fb950;
+            border-radius: 50%;
+            margin-right: 4px;
+        }
+
+        /* Frame 1: Game screen */
+        .game-bg {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            opacity: 0.6;
+        }
+        .game-credits {
+            position: absolute;
+            top: 28px;
+            left: 12px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-left: 2px solid #eab308;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 9px;
+        }
+        .game-credits span { color: #eab308; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+        .game-btn {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 10px 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 10px;
+        }
+        .game-btn .play-icon {
+            width: 28px; height: 28px;
+            background: #3b82f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .game-btn .play-icon::after {
+            content: '▶';
+            color: white;
+            font-size: 10px;
+            margin-left: 2px;
+        }
+
+        /* Frame 2: Primer */
+        .primer-icon { font-size: 32px; margin-bottom: 8px; }
+        .primer-title { font-size: 14px; font-weight: 900; letter-spacing: 0.05em; margin-bottom: 4px; }
+        .primer-sub { font-size: 8px; color: #888; margin-bottom: 12px; }
+        .primer-phone {
+            width: 50px; height: 50px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+        .primer-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        /* Frame 3-4: Video */
+        .video-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .video-placeholder::before {
+            content: '▶ Video Playing';
+            color: rgba(255,255,255,0.3);
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .video-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: #3b82f6;
+            border-radius: 0 2px 2px 0;
+        }
+
+        /* Frame 5: Challenge */
+        .challenge-title { font-size: 12px; font-weight: 700; margin-bottom: 8px; }
+        .challenge-sub { font-size: 8px; color: #666; margin-bottom: 12px; }
+        .option-card {
+            width: 180px;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            transition: all 0.3s;
+        }
+        .option-card.correct {
+            border-color: #3b82f6;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+        }
+        .option-img {
+            width: 36px; height: 36px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+        .option-text { font-size: 10px; font-weight: 700; }
+        .option-sub { font-size: 7px; color: #888; font-family: 'JetBrains Mono', monospace; text-transform: uppercase; }
+
+        /* Frame 6: Hold interaction */
+        .hold-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80%;
+            background: linear-gradient(to top, rgba(59, 130, 246, 0.5), rgba(59, 130, 246, 0.1));
+            border-radius: 10px;
+        }
+        .hold-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 10px;
+            font-weight: 700;
+            color: white;
+            text-align: center;
+        }
+
+        /* Frame 7: Success */
+        .success-check {
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            border: 3px solid rgba(255,255,255,0.1);
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.05));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        .tier-badge {
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 900;
+            margin-bottom: 4px;
+        }
+        .tier-badge.gold { background: rgba(234, 179, 8, 0.2); color: #eab308; border: 1px solid rgba(234, 179, 8, 0.4); }
+        .tier-badge.silver { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+        .success-title { font-size: 14px; font-weight: 900; margin-bottom: 6px; }
+        .gems-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(234, 179, 8, 0.1);
+            border: 1px solid rgba(234, 179, 8, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #eab308;
+        }
+
+        /* Arrow between frames */
+        .arrow-indicator {
+            position: absolute;
+            right: -14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 8px solid #333;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+<h1>AdQuest Demo GIF — Storyboard Frames</h1>
+<p class="subtitle">Screenshot each frame, then assemble with: ffmpeg -framerate 2 -i frame-%02d.png -vf "scale=800:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 adquest-demo.gif</p>
+
+<div class="frames">
+
+    <!-- Frame 1: Game Screen -->
+    <div class="frame">
+        <div class="frame-header">
+            <div class="frame-num">1</div>
+            <div>
+                <div class="frame-title">Game Screen</div>
+                <div class="frame-desc">User sees the "Free Rewards" button in-game</div>
+            </div>
+        </div>
+        <div class="frame-content">
+            <div class="phone-mock">
+                <div class="status-bar"><span class="dot"></span>PROTOCOL V9.0</div>
+                <div class="game-bg"></div>
+                <div class="game-credits">Credits <span>2,450</span></div>
+                <div class="game-btn">
+                    <div class="play-icon"></div>
+                    <div>
+                        <div style="font-size:7px;color:#93c5fd;text-transform:uppercase;letter-spacing:0.1em">Free Rewards</div>
+                        <div style="font-weight:700">WATCH AD TO CLAIM</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="frame-caption">→ User taps "WATCH AD TO CLAIM"</div>
+    </div>
+
+    <!-- Frame 2: Primer -->
+    <div class="frame">
+        <div class="frame-header">
+            <div class="frame-num">2</div>
+            <div>
+                <div class="frame-title">Mystery Primer</div>
+                <div class="frame-desc">Attention capture — "Find the Match"</div>
+            </div>
+        </div>
+        <div class="frame-content" style="background: #050505;">
+            <div class="phone-mock" style="border-color:#222;">
+                <div class="status-bar"><span class="dot"></span>PROTOCOL V9.0</div>
+                <div class="primer-icon">🔍</div>
+                <div class="primer-title">FIND THE MATCH</div>
+                <div class="primer-sub">Watch carefully to find the correct model.</div>
+                <div class="primer-phone">📱</div>
+                <div class="primer-btn">I'M READY →</div>
+            </div>
+        </div>
+        <div class="frame-caption">→ User taps "I'M READY"</div>
+    </div>
+
+    <!-- Frame 3: Video Playing -->
+    <div class="frame">
+        <div class="frame-header">
+            <div class="frame-num">3</div>
+            <div>
+                <div class="frame-title">Video Playback</div>
+                <div class="frame-desc">Brand video plays — user watches voluntarily</div>
+            </div>
+        </div>
+        <div class="frame-content">
+            <div class="phone-mock" style="border-color:#222;">
+                <div class="video-placeholder">
+                    <div class="video-progress" style="width: 40%;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="frame-caption">→ Video plays for 15 seconds (100% completion)</div>
+    </div>
+
+    <!-- Frame 4: Challenge -->
+    <div class="frame">
+        <div class="frame-header">
+            <div class="frame-num">4</div>
+            <div>
+                <div class="frame-title">Verification Challenge</div>
+                <div class="frame-desc">User proves they watched — "Which one was it?"</div>
+            </div>
+        </div>
+        <div class="frame-content" style="background: linear-gradient(180deg, #111827, #000);">
+            <div class="phone-mock" style="border-color:#222;">
+                <div class="status-bar"><span class="dot"></span>PROTOCOL V9.0</div>
+                <div style="padding: 16px;">
+                    <div class="challenge-title" style="text-align:center">Which one was it?</div>
+                    <div class="challenge-sub" style="text-align:center">Tap or Hold to confirm.</div>
+                    <div class="option-card">
+                        <div class="option-img">A56</div>
+                        <div>
+                            <div class="option-text">Galaxy A56</div>
+                            <div class="option-sub">Series A</div>
+                        </div>
+                    </div>
+                    <div class="option-card correct">
+                        <div class="option-img">S25</div>
+                        <div>
+                            <div class="option-text">S25 Ultra</div>
+                            <div class="option-sub" style="color:#60a5fa">Flagship ✓</div>
+                        </div>
+                    </div>
+                    <div class="option-card">
+                        <div class="option-img">Z7</div>
+                        <div>
+                            <div class="option-text">Z Fold7</div>
+                            <div class="option-sub">Foldable</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="frame-caption">→ User holds S25 Ultra to verify attention</div>
+    </div>
+
+    <!-- Frame 5: Hold Interaction -->
+    <div class="frame">
+        <div class="frame-header">
+            <div class="frame-num">5</div>
+            <div>
+                <div class="frame-title">Hold-to-Verify</div>
+                <div class="frame-desc">Physical engagement — fill bar proves real attention</div>
+            </div>
+        </div>
+        <div class="frame-content" style="background: linear-gradient(180deg, #111827, #000);">
+            <div class="phone-mock" style="border-color:#222;">
+                <div class="status-bar"><span class="dot"></span>PROTOCOL V9.0</div>
+                <div style="padding: 16px; width: 100%; height: 100%; position: relative;">
+                    <div class="hold-fill"></div>
+                    <div class="hold-label">
+                        <div style="font-size: 16px; margin-bottom: 4px;">⚡</div>
+                        HOLDING...
+                        <div style="font-size: 8px; color: #93c5fd; margin-top: 2px;">Verifying attention</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="frame-caption">→ Fill bar reaches 100% → Challenge verified</div>
+    </div>
+
+    <!-- Frame 6: Success -->
+    <div class="frame">
+        <div class="frame-header">
+            <div class="frame-num">6</div>
+            <div>
+                <div class="frame-title">Reward Unlocked</div>
+                <div class="frame-desc">Tier B reward + confetti celebration</div>
+            </div>
+        </div>
+        <div class="frame-content" style="background: #050505;">
+            <div class="phone-mock" style="border-color:#222;">
+                <div class="success-check">✓</div>
+                <div class="tier-badge silver">TIER B</div>
+                <div class="success-title">REWARD UNLOCKED</div>
+                <div class="gems-badge">💎 +5 Gems</div>
+            </div>
+        </div>
+        <div class="frame-caption">→ User earns reward, CTA appears → Conversion</div>
+    </div>
+
+</div>
+
+</body>
+</html>

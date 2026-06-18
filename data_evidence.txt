@@ -1,0 +1,35 @@
+=== AdQuest Data Evidence Report ===
+Generated: 2026-06-18
+
+1. UNIQUE REAL USERS: 93
+   Source: test-01, ab_test_logs (developer excluded. test-02 excluded — no user_id field)
+   See User IDs list in raw test files.
+
+2. A/B TEST ENGAGEMENT (real users only):
+   Control: 36 sessions, avg 6.9s
+   AdQuest: 51 sessions, avg 13.7s
+   Ratio: 2.0x
+   Control group description: Users clicked a button and were forced to wait 10 seconds for a reward. Average 6.9s means many abandoned before the wait ended.
+   AdQuest group description: Users voluntarily watched a video and solved a challenge to earn the reward. Average 13.7s means they stayed longer despite having more to do.
+   Key insight: Gamified engagement beats forced waiting, even when it requires more effort.
+   Source: ab_test_logs_rows.csv
+
+3. VIDEO COMPLETION (test-01, real users):
+   Started video/timer: 7
+   Completed: 7
+   Completion rate: 100%
+   IMPORTANT NOTE: 100% completion is ONLY for users who actually started the video.
+   Most sessions (31 out of 38) did NOT start the video at all.
+   Overall completion rate across all AdQuest sessions: ~27% (from new_test data).
+   Source: test-01_rows.csv, new_test/attention_events_rows.csv
+
+4. NEW TEST COMPLETION:
+   Total sessions: 44
+   Rewarded: 12
+   Completion rate: 27%
+   Source: new_test/attention_events_rows.csv
+
+5. CLEANED CSV (real_data.csv):
+   Total rows: 118 (119 lines including header)
+   Each row = one unique session
+   Source: test-01 + ab_test_logs (developer excluded, test-02 excluded)

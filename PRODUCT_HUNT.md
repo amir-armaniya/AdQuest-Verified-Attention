@@ -1,93 +1,23 @@
-# AdQuest — Product Hunt Content
+# AdQuest Protocol: Product Hunt Launch Kit
 
-Copy-paste everything below into Product Hunt.
+## Tagline
+AdQuest: From forced waits to gamified engagement.
 
----
+## Description
+AdQuest transforms passive ad viewing into active, game-like engagement. In our A/B test, users forced to wait 10 seconds for a reward abandoned early (avg 6.9s). Users who chose to watch and verify stayed 2x longer (avg 13.7s). Working prototype with real data tracking.
 
-## Tagline (max 60 chars)
+## Gallery (assets/Product hunt/)
+1. landing-1.png: Hero - The Eagle Eye Challenge.
+2. landing-2.png: The Mystery Primer - Capturing intent.
+3. claim_reward.png: The Action Hub - Gamified reward claim.
+4. list-1.png: The Hybrid Floor - Revenue model (planned).
+5. list-2.png: Proven Performance - Real test data.
 
-```
-Verified attention for mobile ads — no clicks, just real human focus
-```
+## Maker's First Comment
+Hi Product Hunt! I'm Amir, architect of AdQuest. 
 
----
+In mobile ads, forced waiting kills engagement. We tested this: users who clicked a button and were forced to wait 10 seconds for a reward abandoned early — average 6.9 seconds before leaving. 
 
-## Description (max 260 chars)
+AdQuest replaces forced waiting with voluntary participation. Users watch a video and solve a challenge to earn rewards. They stayed 2x longer (13.7s average) despite having more to do. 
 
-```
-AdQuest replaces forced ad views with a gamified verification challenge. Using the Red Car Theory, we prime users to actively search for brand details, then verify their attention with a quick quiz. Advertisers pay per verified attention (CPVA), developers get a revenue floor, and users get rewarded — not interrupted.
-```
-
----
-
-## Website URL
-
-```
-https://adquest.tech/
-```
-
----
-
-## First Comment (post after launch)
-
-```
-Hey PH! 👋
-
-I built AdQuest because I was tired of ads that nobody actually sees.
-
-The problem: Banner blindness costs advertisers billions. Users skip, block, or ignore ads entirely.
-
-The solution: The Red Car Theory. Before showing the ad, we show a category hint (like "Find the Shoe"). This creates a knowledge gap — your brain naturally starts searching. Then after the video, a quick quiz verifies you actually paid attention.
-
-How it works:
-• User sees "Find the phone" → brain activates search mode
-• User watches ad video passively but actively searching
-• Quick 3-card challenge → hold to confirm correct product
-• Verified attention = higher CPM ($4-$7 vs market rate)
-
-Result from our alpha test:
-• 5x-7x more brand attention time
-• 45% verified engagement rate
-• 100% CTA conversion from verified users
-
-Try the live demo: https://adquest.tech/demo.html
-
-Would love your feedback! 🚀
-```
-
----
-
-## Topics (select these)
-
-```
-advertising
-mobile
-gaming
-```
-
----
-
-## Thumbnail Image
-
-Take a screenshot of the landing page hero section (the "From Forced Views To Verified Discovery" text with the gradient).
-
-Size: 1270×760 px
-
----
-
-## Gallery Images / GIF
-
-1. **GIF of demo flow** (30-45 seconds):
-   - Landing page → Click "Launch Demo" → Video plays → Ghost button appears → Challenge with 3 cards → Hold to confirm → Confetti + Reward
-
-2. **Screenshot of chart.html** (alpha test data)
-
-3. **Screenshot of landing page economics section** ($4.00 / $7.00 tiers)
-
----
-
-## Maker Info
-
-```
-Amir Hossein Arman Nia — Product Architect
-```
+This is not a finished product — it's a proof of concept. I'm looking for game developers and publishers who want to collaborate on the next phase: building the Unity SDK.

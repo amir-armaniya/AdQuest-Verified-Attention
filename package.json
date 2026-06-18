@@ -3,5 +3,8 @@
   "private": true,
   "scripts": {
     "dev": "npx wrangler pages dev . --port 8788"
+  },
+  "dependencies": {
+    "puppeteer": "^25.1.0"
   }
 }

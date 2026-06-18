@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AdQuest Demo | Red Car Protocol</title>
-    <meta name="description" content="Experience the Verified Attention Protocol - gamified ad verification">
+    <title>AdQuest Demo | Verified Attention Protocol</title>
+    <meta name="description" content="Experience the Verified Attention Protocol - gamified ad verification prototype">
     <meta name="theme-color" content="#000000">
     
     <!-- Preconnect for faster CDN loading -->
@@ -139,13 +139,14 @@
                         <p class="text-gray-400 text-xs">Loading video...</p>
                     </div>
                     <video id="mainVideo" class="w-full h-full object-contain" playsinline preload="auto">
+                        <!-- TODO: Replace with your own video content. Current video is a placeholder. -->
                         <source src="assets/demo/s25ultra.mp4" type="video/mp4">
                     </video>
                     
                     <div class="absolute bottom-8 right-6 z-[60]">
-                        <button id="ghostBtn" onclick="window.open('#', '_blank')" class="ghost-btn disabled glass-panel bg-blue-600/20 hover:bg-blue-600/40 px-4 py-2 rounded-lg flex items-center gap-2 border-blue-400/30 backdrop-blur-md">
-                            <span class="text-[10px] font-bold text-blue-100">BUY NOW</span>
-                            <i data-lucide="download" class="w-3 h-3 text-blue-100"></i>
+                        <button id="ghostBtn" onclick="window.open('index.html', '_blank')" class="ghost-btn disabled glass-panel bg-blue-600/20 hover:bg-blue-600/40 px-4 py-2 rounded-lg flex items-center gap-2 border-blue-400/30 backdrop-blur-md">
+                            <span class="text-[10px] font-bold text-blue-100">LEARN MORE</span>
+                            <i data-lucide="external-link" class="w-3 h-3 text-blue-100"></i>
                         </button>
                     </div>
                 </div>
@@ -231,9 +232,9 @@
                     </div>
 
                     <div class="w-full max-w-xs flex flex-col gap-3">
-                        <button onclick="window.open('#', '_blank')" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-900/50 transition flex items-center justify-center gap-2">
-                            <span>BUY NOW</span>
-                            <i data-lucide="download" class="w-4 h-4"></i>
+                        <button onclick="window.open('index.html', '_blank')" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-900/50 transition flex items-center justify-center gap-2">
+                            <span>LEARN MORE</span>
+                            <i data-lucide="external-link" class="w-4 h-4"></i>
                         </button>
                         <button onclick="triggerNativeShare()" class="w-full glass-panel bg-white/5 hover:bg-white/10 text-white py-3 rounded-xl font-semibold text-xs transition flex items-center justify-center gap-2 border-white/10">
                             <span>SAVE FOR LATER</span>

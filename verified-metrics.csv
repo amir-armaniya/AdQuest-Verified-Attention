@@ -1,0 +1,14 @@
+metric,value,source,note
+unique_real_users,93,ab_test_logs + test-01 + test-02,Excluding developer sessions (4 user_ids with 88/55/29/21 sessions)
+control_sessions,36,ab_test_logs_rows.csv,Real users only
+control_avg_sec,6.9,ab_test_logs_rows.csv,Average time_on_page for control group
+adquest_sessions,51,ab_test_logs_rows.csv,Real users only
+adquest_avg_sec,13.7,ab_test_logs_rows.csv,Average time_on_page for adquest group
+engagement_ratio,2.0,calculated,AdQuest / Control engagement
+real_sessions_test01,38,test-01_rows.csv,Unique real user sessions
+completed_sessions,7,test-01_rows.csv,Users who finished video + challenge
+completion_rate_pct,18.4,calculated,Completed / Total real sessions
+video_completion_rate_pct,100.0,test-01_rows.csv,Of those who started video all completed
+avg_completed_time_sec,71.1,test-01_rows.csv,Avg time_on_page for completed sessions
+developer_sessions_excluded,81,calculated,4 user_ids with 88/55/29/21 sessions removed
+total_raw_sessions,378,all csv files,Before deduplication
