@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AdQuest Demo | Verified Attention Protocol</title>
     <meta name="description" content="Experience the Verified Attention Protocol - gamified ad verification prototype">
-    <meta name="theme-color" content="#000000">
-    
+    <meta name="theme-color" content="#020617">
+
     <!-- Preconnect for faster CDN loading -->
     <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
     <link rel="preconnect" href="https://unpkg.com" crossorigin>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
@@ -22,47 +22,97 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
-        /* SCROLL FIX: Changed overflow to auto to allow scrolling on small screens */
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background: #000; 
-            color: white; 
-            overflow-x: hidden; 
-            overflow-y: auto; /* Movement Bar Enabled */
-            min-height: 100vh; 
-            width: 100vw; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            background: radial-gradient(circle at center, #0f172a 0%, #000000 90%); 
-            user-select: none; 
-            touch-action: pan-y; /* Allow vertical scroll */
-            padding: 20px 0; /* Add breathing room */
+        /* SCROLL FIX: allow scrolling on small screens */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #020617;
+            color: white;
+            overflow-x: hidden;
+            overflow-y: auto;
+            min-height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background:
+                radial-gradient(900px circle at 50% -10%, rgba(16, 185, 129, 0.18), transparent 60%),
+                radial-gradient(700px circle at 50% 110%, rgba(6, 182, 212, 0.14), transparent 60%),
+                #020617;
+            user-select: none;
+            touch-action: pan-y;
+            padding: 20px 0;
         }
-        
-        #scaler-container { 
-            position: relative; 
-            transform-origin: center center; 
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 
-            box-shadow: 0 0 100px rgba(0,0,0,0.9); 
-            margin: auto; /* Center in scroll view */
+
+        #scaler-container {
+            position: relative;
+            transform-origin: center center;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow:
+                0 0 0 1px rgba(16,185,129,0.25),
+                0 0 0 6px #050505,
+                0 0 0 7px rgba(16,185,129,0.18),
+                0 40px 120px rgba(0,0,0,0.9),
+                0 0 80px rgba(16,185,129,0.15);
+            border-radius: 1.75rem;
+            margin: auto;
         }
-        
-        .titanium-frame { width: 100%; height: 100%; background: #000; border-radius: 1.5rem; position: relative; overflow: hidden; box-shadow: 0 0 0 1px #333, 0 0 0 4px #0a0a0a; }
 
-        .glass-panel { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); }
-        .glass-card { background: linear-gradient(180deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.2s ease-out; position: relative; overflow: hidden; }
+        .titanium-frame {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            border-radius: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 0 1px #1f2937, 0 0 0 4px #0a0a0a;
+        }
 
-        .fill-overlay { position: absolute; bottom: 0; left: 0; width: 100%; height: 0%; background: linear-gradient(to top, rgba(59, 130, 246, 0.6), rgba(59, 130, 246, 0.2)); z-index: 0; transition: height 0.05s linear; }
-        .border-glow { position: absolute; inset: 0; border: 2px solid transparent; border-radius: 0.75rem; z-index: 5; pointer-events: none; transition: border-color 0.2s; }
-        .option-card.active-input .border-glow { border-color: #60a5fa; box-shadow: inset 0 0 20px rgba(59, 130, 246, 0.4); }
-        
-        .option-card.dimmed { opacity: 0.2; pointer-events: none; filter: grayscale(1); transition: opacity 0.5s ease; }
-        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(16, 185, 129, 0.18);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+
+        .glass-card {
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.7) 0%, rgba(2, 6, 23, 0.85) 100%);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.2s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .fill-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0%;
+            background: linear-gradient(to top, rgba(16, 185, 129, 0.7), rgba(6, 182, 212, 0.25));
+            z-index: 0;
+            transition: height 0.05s linear;
+        }
+        .border-glow {
+            position: absolute;
+            inset: 0;
+            border: 2px solid transparent;
+            border-radius: 0.75rem;
+            z-index: 5;
+            pointer-events: none;
+            transition: border-color 0.2s;
+        }
+        .option-card.active-input .border-glow {
+            border-color: #34d399;
+            box-shadow: inset 0 0 22px rgba(16, 185, 129, 0.45), 0 0 24px rgba(16,185,129,0.35);
+        }
+
+        .option-card.dimmed { opacity: 0.18; pointer-events: none; filter: grayscale(1); transition: opacity 0.5s ease; }
+
         @keyframes pulseShine {
-            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); border-color: rgba(59, 130, 246, 0.4); transform: scale(1); }
-            50% { box-shadow: 0 0 20px 0px rgba(59, 130, 246, 0.7); border-color: rgba(59, 130, 246, 1); transform: scale(1.02); }
-            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); border-color: rgba(59, 130, 246, 0.4); transform: scale(1); }
+            0%   { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45); border-color: rgba(16, 185, 129, 0.45); transform: scale(1); }
+            50%  { box-shadow: 0 0 26px 2px rgba(16, 185, 129, 0.8); border-color: rgba(52, 211, 153, 1); transform: scale(1.025); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45); border-color: rgba(16, 185, 129, 0.45); transform: scale(1); }
         }
         .pulse-shine { animation: pulseShine 1.5s infinite; z-index: 20; }
 
@@ -72,9 +122,25 @@
 
         .shake-anim { animation: shake 0.4s ease-in-out; border-color: #ef4444 !important; background: rgba(239, 68, 68, 0.15) !important; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-        
+
         .fade-in { animation: fadeIn 0.5s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+
+        /* Neon ready button */
+        .ready-btn {
+            position: relative;
+            background: linear-gradient(135deg, rgba(16,185,129,0.25), rgba(6,182,212,0.25));
+            border: 1px solid rgba(52, 211, 153, 0.5);
+            box-shadow: 0 0 30px rgba(16,185,129,0.25), inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+        .ready-btn:hover { box-shadow: 0 0 45px rgba(16,185,129,0.45), inset 0 1px 0 rgba(255,255,255,0.12); }
+
+        .game-cta {
+            background: linear-gradient(135deg, rgba(16,185,129,0.22), rgba(6,182,212,0.22));
+            border: 1px solid rgba(52, 211, 153, 0.4);
+            box-shadow: 0 0 40px rgba(16,185,129,0.25);
+        }
+        .game-cta:hover { box-shadow: 0 0 60px rgba(16,185,129,0.45); }
     </style>
 </head>
 <body>
@@ -84,27 +150,27 @@
 
             <div class="absolute top-0 left-0 w-full h-8 flex justify-between items-center px-5 z-50 pointer-events-none bg-gradient-to-b from-black/80 to-transparent">
                 <div class="flex items-center gap-2">
-                    <div class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></div>
-                    <span class="text-[9px] font-mono text-blue-200 tracking-widest">PROTOCOL V9.0</span>
+                    <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></div>
+                    <span class="text-[9px] font-mono text-emerald-200 tracking-widest">PROTOCOL V9.0</span>
                 </div>
             </div>
 
             <div id="gameLayer" class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2850&auto=format&fit=crop')] bg-cover bg-center">
                 <div class="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
                 <div class="absolute top-12 left-6">
-                    <div class="glass-panel px-4 py-2 rounded-full flex items-center gap-2 border-l-2 border-yellow-500">
+                    <div class="glass-panel px-4 py-2 rounded-full flex items-center gap-2 border-l-2 border-emerald-400">
                         <span class="text-[10px] text-gray-400 uppercase font-bold">Credits</span>
-                        <span class="text-yellow-400 font-mono font-bold text-sm">2,450</span>
+                        <span class="text-emerald-300 font-mono font-bold text-sm">2,450</span>
                     </div>
                 </div>
                 <div class="absolute bottom-12 left-0 w-full flex justify-center px-8">
-                    <button onclick="startAdFlow()" class="group relative w-full max-w-xs glass-panel bg-blue-600/20 hover:bg-blue-600/40 border-blue-500/30 py-4 rounded-xl transition-all active:scale-95 shadow-[0_0_30px_rgba(37,99,235,0.2)]">
+                    <button onclick="startAdFlow()" class="group relative w-full max-w-xs game-cta hover:bg-emerald-500/30 py-4 rounded-xl transition-all active:scale-95">
                         <div class="flex items-center justify-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition">
-                                <i data-lucide="play" class="w-4 h-4 text-white fill-current ml-0.5"></i>
+                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition shadow-emerald-500/40">
+                                <i data-lucide="play" class="w-4 h-4 text-slate-900 fill-current ml-0.5"></i>
                             </div>
                             <div class="text-left">
-                                <div class="text-[9px] text-blue-200 uppercase tracking-widest font-bold">Free Rewards</div>
+                                <div class="text-[9px] text-emerald-200 uppercase tracking-widest font-bold">Free Rewards</div>
                                 <div class="text-xs text-white font-bold">WATCH AD TO CLAIM</div>
                             </div>
                         </div>
@@ -112,21 +178,21 @@
                 </div>
             </div>
 
-            <div id="adLayer" class="absolute inset-0 bg-[#050505] z-40 hidden flex-col select-none">
-                
+            <div id="adLayer" class="absolute inset-0 bg-[#020617] z-40 hidden flex-col select-none">
+
                 <div id="primerState" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center fade-in">
                     <div class="max-w-md w-full flex flex-col items-center">
-                        <div class="mb-8 opacity-60 animate-bounce">
-                            <i data-lucide="search" class="w-10 h-10 text-blue-400"></i>
+                        <div class="mb-8 opacity-70 animate-bounce">
+                            <i data-lucide="search" class="w-10 h-10 text-emerald-400"></i>
                         </div>
                         <h1 class="text-3xl font-black text-white tracking-tight mb-2">FIND THE MATCH</h1>
                         <p class="text-gray-400 text-xs mb-8">Watch carefully to find the correct model.</p>
-                        
-                        <div class="w-32 h-32 bg-white/5 rounded-2xl flex items-center justify-center mb-8 border border-white/10 shadow-[0_0_30px_rgba(59,130,246,0.1)]">
+
+                        <div class="w-32 h-32 bg-white/5 rounded-2xl flex items-center justify-center mb-8 border border-emerald-500/20 shadow-[0_0_40px_rgba(16,185,129,0.15)]">
                             <i data-lucide="smartphone" class="w-16 h-16 text-white/80"></i>
                         </div>
 
-                        <button onclick="startVideo()" class="glass-panel px-10 py-4 rounded-full text-xs font-bold text-white hover:bg-white/10 transition flex items-center gap-2 group border-white/10">
+                        <button onclick="startVideo()" class="ready-btn glass-panel px-10 py-4 rounded-full text-xs font-bold text-white hover:bg-emerald-500/20 transition flex items-center gap-2 group">
                             <span>I'M READY</span>
                             <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition"></i>
                         </button>
@@ -134,31 +200,31 @@
                 </div>
 
                 <div id="videoState" class="absolute inset-0 hidden bg-black flex items-center justify-center z-50">
-                    <div id="videoLoader" class="absolute inset-0 flex flex-col items-center justify-center bg-[#050505] z-[51]">
-                        <div class="w-12 h-12 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mb-4"></div>
+                    <div id="videoLoader" class="absolute inset-0 flex flex-col items-center justify-center bg-[#020617] z-[51]">
+                        <div class="w-12 h-12 border-2 border-emerald-500/30 border-t-emerald-400 rounded-full animate-spin mb-4"></div>
                         <p class="text-gray-400 text-xs">Loading video...</p>
                     </div>
                     <video id="mainVideo" class="w-full h-full object-contain" playsinline preload="auto">
                         <!-- TODO: Replace with your own video content. Current video is a placeholder. -->
                         <source src="assets/demo/s25ultra.mp4" type="video/mp4">
                     </video>
-                    
+
                     <div class="absolute bottom-8 right-6 z-[60]">
-                        <button id="ghostBtn" onclick="window.open('index.html', '_blank')" class="ghost-btn disabled glass-panel bg-blue-600/20 hover:bg-blue-600/40 px-4 py-2 rounded-lg flex items-center gap-2 border-blue-400/30 backdrop-blur-md">
-                            <span class="text-[10px] font-bold text-blue-100">LEARN MORE</span>
-                            <i data-lucide="external-link" class="w-3 h-3 text-blue-100"></i>
+                        <button id="ghostBtn" onclick="window.open('index.html', '_blank')" class="ghost-btn disabled glass-panel bg-emerald-600/20 hover:bg-emerald-600/40 px-4 py-2 rounded-lg flex items-center gap-2 border-emerald-400/30 backdrop-blur-md">
+                            <span class="text-[10px] font-bold text-emerald-100">LEARN MORE</span>
+                            <i data-lucide="external-link" class="w-3 h-3 text-emerald-100"></i>
                         </button>
                     </div>
                 </div>
 
-                <div id="challengeState" class="absolute inset-0 hidden flex flex-col items-center justify-center p-6 bg-gradient-to-b from-gray-900 to-black">
+                <div id="challengeState" class="absolute inset-0 hidden flex flex-col items-center justify-center p-6 bg-gradient-to-b from-slate-900 to-black">
                     <div class="text-center mb-6 relative z-10">
                         <h3 class="text-lg font-bold text-white">Which one was it?</h3>
                         <p class="text-gray-500 text-[10px] mt-1">Tap or Hold to confirm.</p>
                     </div>
 
                     <div id="optionsGrid" class="grid gap-3 w-full max-w-2xl relative z-10">
-                        <div id="opt-1" class="option-card glass-card rounded-xl group p-1 cursor-pointer" 
+                        <div id="opt-1" class="option-card glass-card rounded-xl group p-1 cursor-pointer"
                              onmousedown="startInput(1, this, event)" ontouchstart="startInput(1, this, event)"
                              onmouseup="endInput(1, this)" ontouchend="endInput(1, this)"
                              onmouseleave="endInput(1, this)" ontouchcancel="endInput(1, this)">
@@ -187,7 +253,7 @@
                                 </div>
                                 <div class="text-left">
                                     <div class="text-sm font-bold text-white">S25 Ultra</div>
-                                    <div class="text-[9px] text-blue-400 font-mono uppercase">Flagship</div>
+                                    <div class="text-[9px] text-emerald-400 font-mono uppercase">Flagship</div>
                                 </div>
                             </div>
                         </div>
@@ -211,20 +277,20 @@
                     </div>
                 </div>
 
-                <div id="successState" class="absolute inset-0 hidden flex flex-col items-center justify-between py-12 px-6 bg-[#050505] z-50 fade-in">
-                    
+                <div id="successState" class="absolute inset-0 hidden flex flex-col items-center justify-between py-12 px-6 bg-[#020617] z-50 fade-in">
+
                     <div class="flex flex-col items-center w-full">
                         <div id="successIcon" class="relative mb-4">
-                            <div class="absolute inset-0 bg-green-500/20 blur-2xl rounded-full"></div>
+                            <div class="absolute inset-0 bg-emerald-500/25 blur-2xl rounded-full"></div>
                             <div class="relative w-20 h-20 rounded-full border-4 border-white/10 flex items-center justify-center bg-gradient-to-br from-green-500/20 to-black">
                                 <i data-lucide="check" class="w-10 h-10 text-green-400"></i>
                             </div>
                         </div>
 
                         <div id="tierBadge" class="mb-3"></div>
-                        
+
                         <h2 class="text-2xl font-black text-white tracking-tight mb-2">REWARD UNLOCKED</h2>
-                        
+
                         <div id="gemsDisplay" class="flex items-center gap-2 bg-yellow-500/10 px-4 py-1.5 rounded-full border border-yellow-500/20">
                             <i data-lucide="gem" class="w-4 h-4 text-yellow-400"></i>
                             <span class="text-yellow-400 font-bold text-lg">+100 Gems</span>
@@ -232,7 +298,7 @@
                     </div>
 
                     <div class="w-full max-w-xs flex flex-col gap-3">
-                        <button onclick="window.open('index.html', '_blank')" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-900/50 transition flex items-center justify-center gap-2">
+                        <button onclick="window.open('index.html', '_blank')" class="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-900 py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-emerald-900/50 transition flex items-center justify-center gap-2">
                             <span>LEARN MORE</span>
                             <i data-lucide="external-link" class="w-4 h-4"></i>
                         </button>
@@ -338,14 +404,14 @@
             let baseWidth = isPortrait ? 360 : 800;
             let baseHeight = isPortrait ? 640 : 400;
 
-            if (isPortrait) { optionsGrid.className = "grid grid-cols-1 gap-3 w-full relative z-10 px-4"; } 
+            if (isPortrait) { optionsGrid.className = "grid grid-cols-1 gap-3 w-full relative z-10 px-4"; }
             else { optionsGrid.className = "grid grid-cols-3 gap-4 w-full relative z-10 px-8"; }
 
             // UPDATED SCALING: Reduced multiplier to leave margin for scroll/buttons
             const scaleX = (windowWidth * 0.9) / baseWidth;
             const scaleY = (windowHeight * 0.85) / baseHeight;
             let scale = Math.min(scaleX, scaleY);
-            scale = Math.min(scale, 1.8); 
+            scale = Math.min(scale, 1.8);
             container.style.width = `${baseWidth}px`;
             container.style.height = `${baseHeight}px`;
             container.style.transform = `scale(${scale})`;
@@ -387,7 +453,7 @@
         let videoEndedAt = null;
         let challengeEndedAt = null;
         let totalHoldMs = 0;
-        
+
         const video = document.getElementById('mainVideo');
 
         function startAdFlow() {
@@ -424,17 +490,17 @@
                 ghostBtn.classList.remove('active');
                 ghostBtn.classList.add('disabled');
                 video.currentTime = 0;
-                
+
                 video.oncanplay = () => {
                     videoLoader.classList.add('hidden');
                     video.play().catch(e => console.log("Video playback blocked", e));
                 };
-                
+
                 setTimeout(() => {
                     videoLoader.classList.add('hidden');
                     if (video.paused) video.play().catch(e => console.log("Video playback blocked", e));
                 }, 3000);
-                
+
                 video.onended = endVideo;
                 videoStartedAt = Date.now();
                 currentPhase = 'video';
@@ -470,15 +536,15 @@
 
         function startInput(id, el, e) {
             if (isLocked) return;
-            
+
             clearInterval(decayInterval);
-            clearInterval(inputInterval); 
+            clearInterval(inputInterval);
 
             el.classList.add('active-input');
             const overlay = el.querySelector('.fill-overlay');
             holdStartMs = Date.now();
-            
-            progress += 20; 
+
+            progress += 20;
             updateVisuals(overlay, progress, id, el);
             playTone(200 + progress * 2);
 
@@ -533,11 +599,11 @@
             if (id === CORRECT_ID) {
                 clearTimeout(hintTimer);
                 clearTimeout(superHintTimer);
-                
+
                 confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 }, colors: ['#4ade80', '#60a5fa'] });
                 document.getElementById('challengeState').classList.add('hidden');
                 document.getElementById('successState').classList.remove('hidden');
-                
+
                 // Compute tier
                 let tier = 'bronze';
                 let score = 0;
@@ -548,10 +614,10 @@
                 const tierDiv = document.getElementById('tierBadge');
                 const gemsDiv = document.getElementById('gemsDisplay');
                 const iconDiv = document.getElementById('successIcon');
-                
+
                 let gems = 0;
                 let iconColor = '';
-                
+
                 if (tier === 'gold') {
                     gems = 10;
                     iconColor = 'from-yellow-500/30 to-yellow-600/10';
@@ -566,16 +632,16 @@
                     confetti({ particleCount: 300, spread: 100, origin: { y: 0.6 }, colors: ['#facc15', '#f59e0b', '#eab308'] });
                 } else if (tier === 'silver') {
                     gems = 5;
-                    iconColor = 'from-blue-500/30 to-cyan-500/10';
+                    iconColor = 'from-cyan-500/30 to-emerald-500/10';
                     tierDiv.innerHTML = `
                         <div class="flex flex-col items-center gap-1">
-                            <div class="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-400/40 shadow-[0_0_30px_rgba(59,130,246,0.3)]">
-                                <span class="text-lg font-black text-blue-300 tracking-wider">TIER B</span>
+                            <div class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500/20 to-emerald-500/20 border border-cyan-400/40 shadow-[0_0_30px_rgba(16,185,129,0.3)]">
+                                <span class="text-lg font-black text-cyan-300 tracking-wider">TIER B</span>
                             </div>
-                            <span class="text-[10px] font-bold text-blue-400/80 uppercase tracking-widest">Silver · Good Focus</span>
+                            <span class="text-[10px] font-bold text-cyan-400/80 uppercase tracking-widest">Silver · Good Focus</span>
                         </div>
                     `;
-                    confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 }, colors: ['#60a5fa', '#38bdf8', '#06b6d4'] });
+                    confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 }, colors: ['#22d3ee', '#34d399', '#06b6d4'] });
                 } else {
                     gems = 3;
                     iconColor = 'from-gray-400/20 to-gray-500/10';
@@ -589,14 +655,14 @@
                     `;
                     confetti({ particleCount: 100, spread: 60, origin: { y: 0.6 }, colors: ['#9ca3af', '#6b7280', '#d1d5db'] });
                 }
-                
+
                 // Update gems display
                 gemsDiv.innerHTML = `
                     <i data-lucide="gem" class="w-5 h-5 text-yellow-400"></i>
                     <span class="text-yellow-400 font-black text-xl">+${gems} Gems</span>
                 `;
                 lucide.createIcons();
-                
+
                 // Update icon color
                 iconDiv.querySelector('.bg-gradient-to-br').className = `relative w-20 h-20 rounded-full border-4 border-white/10 flex items-center justify-center bg-gradient-to-br ${iconColor}`;
 
@@ -627,7 +693,7 @@
                 attempts++;
                 progress = 0;
                 el.querySelector('.fill-overlay').style.height = '0%';
-                
+
                 el.classList.add('shake-anim');
                 if (navigator.vibrate) navigator.vibrate(200);
                 setTimeout(() => el.classList.remove('shake-anim'), 400);
