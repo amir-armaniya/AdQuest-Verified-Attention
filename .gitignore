@@ -25,3 +25,9 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+test-index.jpeg
+test-hero.jpeg
+.playwright-mcp/page-2026-07-05T00-56-02-918Z.yml
+.playwright-mcp/page-2026-07-05T00-47-42-094Z.yml
+.playwright-mcp/console-2026-07-05T00-55-58-262Z.log
+.playwright-mcp/console-2026-07-05T00-47-39-000Z.log
