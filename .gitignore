@@ -26,3 +26,9 @@ Thumbs.db
 .vscode/
 .idea/
 .kilo
+
+# Test images
+test-*.jpeg
+
+# Playwright MCP
+.playwright-mcp/
