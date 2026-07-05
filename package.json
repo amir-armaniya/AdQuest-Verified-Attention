@@ -2,7 +2,8 @@
   "name": "adquest-verified-attention",
   "private": true,
   "scripts": {
-    "dev": "npx wrangler pages dev . --port 8788"
+    "dev": "npx wrangler dev --port 8788",
+    "deploy": "npx wrangler deploy"
   },
   "dependencies": {
     "puppeteer": "^25.1.0"

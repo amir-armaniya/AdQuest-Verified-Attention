@@ -1,0 +1,45 @@
+# Worker script (handled by main config, not as asset)
+_worker.js
+
+# Build/runtime
+.wrangler
+node_modules
+.git
+.kilo
+.playwright-mcp
+
+# Private/internal directories
+notion/
+archive/
+PRD/
+pitch deck/
+scripts/
+
+# Data files (not needed for website)
+*.csv
+*.xlsx
+*.pdf
+*.pdf.pdf
+
+# Python scripts
+*.py
+
+# Git/config files
+.gitignore
+.gitattributes
+package.json
+package-lock.json
+LICENSE
+README.md
+README.md.bak
+.env
+.env.*
+
+# Product Hunt assets (old version)
+assets/gif-frames/
+assets/Product hunt/
+
+# Other non-website files
+data_evidence.txt
+PRODUCT_HUNT.md
+test-*.jpeg

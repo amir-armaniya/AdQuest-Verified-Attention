@@ -1,0 +1,8 @@
+{
+  "name": "adquest-verified-attention",
+  "compatibility_date": "2025-12-22",
+  "main": "_worker.js",
+  "assets": {
+    "directory": "."
+  }
+}
