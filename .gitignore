@@ -25,6 +25,7 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+.kilo/
 test-index.jpeg
 test-hero.jpeg
 .playwright-mcp/page-2026-07-05T00-56-02-918Z.yml
